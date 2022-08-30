@@ -17,3 +17,11 @@ You can create one of these in your Linear settings (hit <kbd>g</kbd>-<kbd>s</kb
 
 The token is stored in OmniFocus' credentials database that they make available to plugins instead of being stored in plain text somewhere, so it should be reasonably secure.
 That said, if you want to rotate or remove the key, hold <kbd>⌥</kbd> when invoking the script, and you'll be prompted for a new key.
+
+## License
+
+Except for third-party icons and assets listed below, this code is released under the [BSD 3-Clause License](https://opensource.org/licenses/BSD-3-Clause), included at `LICENSE` in this source.
+
+Exceptions:
+
+- The Linear logo icon is provided by [Linear in their Brand Guidelines](https://linear.app/docs/brand-guidelines) section, and does not have a license listed.
