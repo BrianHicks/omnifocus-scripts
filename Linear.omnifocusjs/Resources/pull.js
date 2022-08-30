@@ -1,15 +1,3 @@
-/*{
-    "author": "Brian Hicks",
-    "targets": ["omnifocus"],
-    "type": "action",
-    "identifier": "zone.bytes.linear.pull",
-    "version": "0.1",
-    "description": "Pull assigned tasks from Linear, creating projects and tags as necessary",
-    "label": "Pull from Linear",
-    "mediumLabel": "Pull from Linear",
-    "longLabel": "Pull from Linear",
-    "paletteLabel": "Pull from Linear",
-}*/
 (() => {
     let creds = new Credentials();
 

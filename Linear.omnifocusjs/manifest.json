@@ -1,0 +1,13 @@
+{
+  "author": "Brian Hicks",
+  "identifier": "zone.bytes.linear",
+  "defaultLocale": "en",
+  "version": "1.0",
+  "description": "Work with Linear from OmniFocus",
+  "actions": [
+    {
+      "image": "icon.png",
+      "identifier": "pull"
+    }
+  ]
+}
