@@ -1,0 +1,47 @@
+/*{
+    "author": "Brian Hicks",
+    "targets": ["omnifocus"],
+    "type": "action",
+    "identifier": "zone.bytes.linear.pull",
+    "version": "0.1",
+    "description": "Pull assigned tasks from Linear, creating projects and tags as necessary",
+    "label": "Pull from Linear",
+    "mediumLabel": "Pull from Linear",
+    "longLabel": "Pull from Linear",
+    "paletteLabel": "Pull from Linear",
+}*/
+(() => {
+    // var query = "{ viewer { assignedIssues(filter: {state: {type: {nin: ["completed","canceled"]}}}) { nodes { identifier title url team { name } project { name } } } } }";
+    let creds = new Credentials();
+    let linearService = "api.linear.app";
+
+    var action = new PlugIn.Action(async () => {
+        console.log(app.optionKeyDown);
+        let stored = creds.read(linearService);
+
+        let key = null;
+        if (stored === null) {
+           let credsForm = new Form();
+           credsForm.addField(new Form.Field.Password("key", "API Key"));
+
+           await credsForm.show("Please create a personal API key in the Linear settings and paste it here\n(hold option while activating this workflow in the future to reset this)", "Save Key");
+           key = credsForm.values.key;
+
+           creds.write(linearService, "", key);
+        }
+
+        console.log("before", new Date());
+        var alert = new Alert("title", "body");
+        await alert.show();
+        console.log("after", new Date());
+    });
+
+    // If needed, uncomment, and add a function that returns true if the current selection is appropriate for the action.
+    /*
+    action.validate = function(selection){
+
+    };
+    */
+        
+    return action;
+})();
