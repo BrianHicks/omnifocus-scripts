@@ -43,9 +43,11 @@
 
           let nextSiblingForm = new Form();
           nextSiblingForm.addField(new Form.Field.String("name", "What's Next?"));
+          nextSiblingForm.addField(new Form.Field.String("note", "Notes"));
           await nextSiblingForm.show(`What's the next thing that needs to happen after "${currentSibling.name}"?`, "Save");
 
           currentSibling = new Task(nextSiblingForm.values.name, currentSibling.after);
+          currentSibling.note = nextSiblingForm.values.note;
           currentSibling.addTags(originalTask.tags);
         }
 
@@ -55,9 +57,11 @@
         /////////////////////////////
         let nextThingForm = new Form();
         nextThingForm.addField(new Form.Field.String("name", "What's Next?"));
+        nextThingForm.addField(new Form.Field.String("note", "Notes"));
         await nextThingForm.show(`What's the next thing that needs to happen to finish "${originalTask.name}"?`, "Save");
 
         let currentSibling = new Task(nextThingForm.values.name, originalTask.beginning);
+        currentSibling.note = nextThingForm.values.note;
         currentSibling.addTags(originalTask.tags);
 
         while (true) {
@@ -72,9 +76,11 @@
 
           let nextSiblingForm = new Form();
           nextSiblingForm.addField(new Form.Field.String("name", "What's Next?"));
+          nextSiblingForm.addField(new Form.Field.String("note", "Notes"));
           await nextSiblingForm.show(`What's the next thing that needs to happen after "${currentSibling.name}"?`, "Save");
 
           currentSibling = new Task(nextSiblingForm.values.name, currentSibling.after);
+          currentSibling.note = nextSiblingForm.values.note;
           currentSibling.addTags(originalTask.tags);
         }
 
