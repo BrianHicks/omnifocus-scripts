@@ -48,8 +48,6 @@
             //////////////////////////////////
             let toFocus = [];
             for (let linearTask of body.data.viewer.assignedIssues.nodes) {
-              console.log("x", JSON.stringify(linearTask));
-
               let teamsTag = flattenedTags.byName("teams") || new Tag("teams");
               let teamTag = teamsTag.tagNamed(linearTask.team.name) || new Tag(linearTask.team.name, teamsTag);
 
