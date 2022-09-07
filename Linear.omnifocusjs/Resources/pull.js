@@ -51,6 +51,8 @@
               let teamsTag = flattenedTags.byName("teams") || new Tag("teams");
               let teamTag = teamsTag.tagNamed(linearTask.team.name) || new Tag(linearTask.team.name, teamsTag);
 
+              let linearTag = flattenedTags.byName("from Linear") || new Tag("from Linear");
+
               let projectName = `${linearTask.team.name} Non-Project Tasks`;
               if (linearTask.project !== null) {
                 projectName = linearTask.project.name;
@@ -58,12 +60,14 @@
 
               let project = flattenedProjects.byName(projectName) || new Project(projectName);
               project.addTag(teamTag);
+              project.addTag(linearTag);
               project.containsSingletonActions = true;
               toFocus.push(project);
 
               let taskName = `${linearTask.identifier}: ${linearTask.title}`;
               let task = project.taskNamed(taskName) || new Task(taskName, project);
               task.addTag(teamTag);
+              task.addTag(linearTag);
               if (task.note.indexOf(linearTask.url) === -1) {
                 if (task.note !== "") {
                   task.appendStringToNote(`\n\n${linearTask.url}`);
