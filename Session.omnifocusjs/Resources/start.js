@@ -1,16 +1,8 @@
 "use strict";
-/*{
-  "type": "action",
-  "targets": ["omnifocus"],
-  "author": "Brian Hicks",
-  "identifier": "zone.bytes.focus",
-  "version": "1.0",
-  "description": "Start a pomodoro for the selected task",
-  "label": "Focus",
-  "shortLabel": "Focus",
-  "paletteLabel": "Focus",
-  "image": "clock"
-}*/
+/*
+WARNING: if you're looking at the file ending in .js and want to make changes,
+don't! Modify the .ts file and run `tsc` instead!
+*/
 (() => {
     var action = new PlugIn.Action(async (selection, sender) => {
         try {
