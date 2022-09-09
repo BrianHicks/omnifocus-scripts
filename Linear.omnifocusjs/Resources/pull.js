@@ -28,7 +28,7 @@
             // Step 2: get the tasks //
             ///////////////////////////
             req.method = "POST";
-            req.bodyString = '{"query":"{ viewer { assignedIssues(filter: {state: {type: {nin: [\\"completed\\",\\"canceled\\"]}}}) { nodes { identifier title url team { name } project { name } } } } }"}';
+            req.bodyString = '{"query":"{ viewer { assignedIssues(filter: {state: {type: {nin: [\\"completed\\",\\"canceled\\"]}}}) { nodes { identifier title url team { name } project { name url } } } } }"}';
             req.headers = {
               "Content-Type": "application/json",
               "Authorization": key,
@@ -63,6 +63,13 @@
               project.addTag(linearTag);
               project.containsSingletonActions = true;
               toFocus.push(project);
+              if (linearTask.project && project.note.indexOf(linearTask.project.url) === -1) {
+                if (project.note !== "") {
+                  project.appendStringToNote(`\n\n${linearTask.project.url}`);
+                } else {
+                  project.appendStringToNote(linearTask.project.url)
+                }
+              }
 
               let taskName = `${linearTask.identifier}: ${linearTask.title}`;
               let task = project.taskNamed(taskName) || new Task(taskName, project);
