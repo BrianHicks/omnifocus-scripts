@@ -7,5 +7,8 @@
   outputs = inputs:
     inputs.flake-utils.lib.eachDefaultSystem (system:
       let pkgs = import inputs.nixpkgs { inherit system; };
-      in { devShell = pkgs.mkShell { packages = [ ]; }; });
+      in {
+        devShell =
+          pkgs.mkShell { packages = [ pkgs.nodePackages.typescript ]; };
+      });
 }
