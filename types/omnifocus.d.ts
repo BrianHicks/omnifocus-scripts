@@ -1572,6 +1572,7 @@ declare class URL {
     deletingLastPathComponent(): URL;
     readonly string: string;
     readonly toObject: Object | null;
+    readonly host: string | null;
 }
 
 // URL.Access

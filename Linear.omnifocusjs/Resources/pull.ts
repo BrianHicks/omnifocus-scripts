@@ -3,16 +3,15 @@
 
     var action = new PlugIn.Action(async () => {
         try {
-            let url = "https://api.linear.app/graphql";
-            let req = URL.FetchRequest.fromString(url);
-            if (req === null) {
+            let req = URL.FetchRequest.fromString("https://api.linear.app/graphql");
+            if (req === null || req.url === null || req.url.host === null) {
                 throw "could not parse the URL for Linear's API"
             }
 
             /////////////////////////////////////
             // Step 1: make sure we have creds //
             /////////////////////////////////////
-            let stored = creds.read(url);
+            let stored = creds.read(req.url.host);
 
             let key = null;
             if (stored === null || app.optionKeyDown) {
@@ -22,7 +21,7 @@
                await credsForm.show("Please create a personal API key in the Linear settings and paste it here\n(hold option while activating this workflow in the future to reset this)", "Save Key");
                key = (credsForm.values as { key: string }).key;
 
-               creds.write(url, "-", key);
+               creds.write(req.url.host, "-", key);
             } else {
                key = stored.password;
             }
