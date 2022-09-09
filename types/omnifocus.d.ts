@@ -188,10 +188,10 @@ declare class ColorSpace {
 // Console
 
 declare class Console {
-    log(message: Object, additional: Array<Object | null>);
-    error(message: Object, additional: Array<Object | null>);
-    info(message: Object, additional: Array<Object | null>);
-    warn(message: Object, additional: Array<Object | null>);
+    log(message: any, additional?: Array<any>);
+    error(message: any, additional?: Array<any>);
+    info(message: any, additional?: Array<any>);
+    warn(message: any, additional?: Array<any>);
     clear();
 }
 
@@ -743,7 +743,7 @@ declare namespace ForecastDay {
 
 declare class Form {
     constructor ();
-    addField(field: Form.Field, index: number | null);
+    addField(field: Form.Field, index?: number | null);
     removeField(field: Form.Field);
     show(title: string, confirmTitle: string): Promise<Form>;
     readonly fields: Array<Form.Field>;
@@ -788,7 +788,7 @@ declare namespace Form.Field {
 
 declare namespace Form.Field {
     class Option extends Form.Field {
-        constructor (key: string, displayName: string | null, options: Array<Object>, names: Array<string> | null, selected: Object | null, nullOptionTitle: string | null);
+        constructor (key: string, displayName?: string | null, options?: Array<Object>, names?: Array<string> | null, selected?: Object | null, nullOptionTitle?: string | null);
         allowsNull: boolean;
         nullOptionTitle: string | null;
     }
@@ -806,7 +806,7 @@ declare namespace Form.Field {
 
 declare namespace Form.Field {
     class String extends Form.Field {
-        constructor (key: string, displayName: string | null, value: Object | null, formatter: Formatter | null);
+        constructor (key: string, displayName?: string | null, value?: Object | null, formatter?: Formatter | null);
     }
 }
 
