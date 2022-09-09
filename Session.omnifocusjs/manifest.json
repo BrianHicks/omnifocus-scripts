@@ -1,0 +1,13 @@
+{
+  "author": "Brian Hicks",
+  "identifier": "zone.bytes.session",
+  "defaultLocale": "en",
+  "version": "1.0",
+  "description": "Start tasks in Session (https://www.stayinsession.com/)",
+  "actions": [
+    {
+      "image": "clock",
+      "identifier": "start"
+    }
+  ]
+}
