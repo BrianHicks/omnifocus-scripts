@@ -1,0 +1,13 @@
+{
+  "author": "Brian Hicks",
+  "identifier": "zone.bytes.finish-and-follow-up",
+  "defaultLocale": "en",
+  "version": "1.0",
+  "description": "Finish a task and immediately sweep for next steps",
+  "actions": [
+    {
+      "image": "checkmark",
+      "identifier": "finish"
+    }
+  ]
+}

@@ -1,15 +1,3 @@
-/*{
-  "type": "action",
-  "targets": ["omnifocus"],
-  "author": "Brian Hicks",
-  "identifier": "zone.bytes.finish-and-follow-up",
-  "version": "1.0",
-  "description": "Finish a task and immediately sweep for next steps",
-  "label": "Finish and Follow Up",
-  "shortLabel": "Finish",
-  "paletteLabel": "Finish",
-  "image": "checkmark"
-}*/
 (() => {
   var action = new PlugIn.Action(async (selection, sender) => {
     try {
