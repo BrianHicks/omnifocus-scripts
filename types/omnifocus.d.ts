@@ -16,7 +16,7 @@
 
 declare class Alert {
     constructor (title: string, message: string);
-    show(callback: Function | null): Promise<number>;
+    show(callback?: Function | null): Promise<number>;
     addOption(string: string);
 }
 
@@ -199,7 +199,7 @@ declare class Console {
 
 declare class Credentials {
     constructor ();
-    read(service: string): object | null;
+    read(service: string): { user: string, password: string } | null;
     write(service: string, username: string, password: string);
     remove(service: string);
     readBookmark(service: string): URL.Bookmark | null;
@@ -319,7 +319,7 @@ declare namespace Tag {
 }
 
 declare class Tag extends ActiveObject {
-    constructor (name: string, position: Tag | Tag.ChildInsertionLocation | null);
+    constructor (name: string, position?: Tag | Tag.ChildInsertionLocation | null);
     tagNamed(name: string): Tag | null;
     childNamed(name: string): Tag | null;
     apply(f: Function): ApplyResult | null;
@@ -447,7 +447,7 @@ declare namespace Project {
 }
 
 declare class Project extends DatabaseObject {
-    constructor (name: string, position: Folder | Folder.ChildInsertionLocation | null);
+    constructor (name: string, position?: Folder | Folder.ChildInsertionLocation | null);
     taskNamed(name: string): Task | null;
     appendStringToNote(stringToAppend: string);
     addAttachment(attachment: FileWrapper);
@@ -798,7 +798,7 @@ declare namespace Form.Field {
 
 declare namespace Form.Field {
     class Password extends Form.Field {
-        constructor (key: string, displayName: string | null, value: string | null);
+        constructor (key: string, displayName?: string | null, value?: string | null);
     }
 }
 
