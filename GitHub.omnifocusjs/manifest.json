@@ -1,0 +1,13 @@
+{
+  "author": "Brian Hicks",
+  "identifier": "zone.bytes.github",
+  "defaultLocale": "en",
+  "version": "1.0",
+  "description": "Work with GitHub from OmniFocus",
+  "actions": [
+    {
+      "image": "icon.png",
+      "identifier": "pull"
+    }
+  ]
+}
