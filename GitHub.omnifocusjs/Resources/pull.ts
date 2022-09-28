@@ -84,7 +84,7 @@
               toFocus.push(project);
         
               if (project.tasks.length === 0) {
-                new Task(`what needs to be done for ${repo}#${issue.number}`, project);
+                new Task(`what needs to be done for ${repo}#${issue.number}?`, project);
               }
             }
 

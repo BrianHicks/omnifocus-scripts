@@ -57,7 +57,7 @@
                 project.note = `${issue.url}\n\n---\n\n${issue.body}`;
                 toFocus.push(project);
                 if (project.tasks.length === 0) {
-                    new Task(`what needs to be done for ${repo}#${issue.number}`, project);
+                    new Task(`what needs to be done for ${repo}#${issue.number}?`, project);
                 }
             }
             if (app.platformName === "macOS") {
