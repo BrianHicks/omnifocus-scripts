@@ -127,6 +127,7 @@
             const now = new Date();
             const hour = now.getHours();
             const day = now.getDay();
+            // TODO: weight phone calls during business hours too
             if (hour >= 8 && hour <= 17 && day != 0 && day != 6) {
                 return { work: 0.9, personal: 0.1 };
             }
