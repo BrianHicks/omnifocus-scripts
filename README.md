@@ -18,6 +18,11 @@ You can create one of these in your Linear settings (hit <kbd>g</kbd>-<kbd>s</kb
 The token is stored in OmniFocus' credentials database that they make available to plugins instead of being stored in plain text somewhere, so it should be reasonably secure.
 That said, if you want to rotate or remove the key, hold <kbd>⌥</kbd> when invoking the script, and you'll be prompted for a new key.
 
+## GitHub
+
+Like the Linear script, except it pulls work from assigned GitHub issues instead of Linear tasks.
+It also creates projects instead of tasks within a project.
+
 ## License
 
 Except for third-party icons and assets listed below, this code is released under the [BSD 3-Clause License](https://opensource.org/licenses/BSD-3-Clause), included at `LICENSE` in this source.
