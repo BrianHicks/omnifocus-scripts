@@ -79,6 +79,10 @@
     }
     class DontDoATask {
         constructor() {
+            // many of these prompts are inspired by Taylor Troesh's nowify. Big thanks
+            // to Taylor for sharing the list that inspired this one!
+            //
+            // https://taylor.town/projects/nowify
             this.thingsToTry = [
                 "Is the house happy?",
                 "Is your heart happy?",
@@ -221,10 +225,6 @@
     }
     var action = new PlugIn.Action(async () => {
         try {
-            // TODO: more strategies:
-            //
-            // - reflection prompts (constant weight)
-            // - stuff stolen from Taylor's nowify prompts
             let strategies = [
                 new ChooseATask(),
                 new DontDoATask(),
