@@ -97,7 +97,14 @@
 
   var action = new PlugIn.Action(async () => {
     try {
-      console.log(`task: ${chooseATask()}`);
+      // TODO: chosoe a strategy randomly from:
+      //
+      // - process inbox tasks (if any). Weight is number of inbox tasks.
+      // - review project (with prompt like "how will this make the world better when it's done?" or "are you going to make any progress on this during the next week?"). Weight is number of unreviewed projects.
+      // - reflection prompts (constant weight)
+      // - stuff stolen from Taylor's nowify prompts
+      // - the "choose a task" strategy below
+      chooseATask()
     } catch (err) {
       console.error(err);
       throw err;
