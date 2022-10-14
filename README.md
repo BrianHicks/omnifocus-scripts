@@ -23,6 +23,20 @@ That said, if you want to rotate or remove the key, hold <kbd>⌥</kbd> when inv
 Like the Linear script, except it pulls work from assigned GitHub issues instead of Linear tasks.
 It also creates projects instead of tasks within a project.
 
+## Gardening
+
+Various tasks for making sure my OmniFocus database is updated and nice to work with.
+
+### Pick
+
+Picks a strategy for what to do next based on the weights of what's available.
+Some strategies:
+
+- Do a task (weighted by tag so that work tasks are more likely to be picked on workdays but not on weekends.)
+- Review projects, complete with a prompt for a lens to view the projects through for the session
+- Process inbox
+- Pull work from Linear, GitHub, email, etc.
+
 ## License
 
 Except for third-party icons and assets listed below, this code is released under the [BSD 3-Clause License](https://opensource.org/licenses/BSD-3-Clause), included at `LICENSE` in this source.
