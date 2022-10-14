@@ -1,6 +1,4 @@
 (() => {
-  let creds = new Credentials();
-
   var getWeights = function (): { work: number; personal: number } {
     const now = new Date();
     const hour = now.getHours();

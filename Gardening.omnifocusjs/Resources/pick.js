@@ -1,6 +1,5 @@
 "use strict";
 (() => {
-    let creds = new Credentials();
     var getWeights = function () {
         const now = new Date();
         const hour = now.getHours();
