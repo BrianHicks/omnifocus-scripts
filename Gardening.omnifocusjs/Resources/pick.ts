@@ -48,6 +48,15 @@
   }
 
   class ReviewProjects implements Strategy {
+    readonly prompts = [
+      "How will doing this project make the world a better place?",
+      "Will doing this project bring me joy?",
+      "Will doing this project get me closer to my goals?",
+      "Why did I add this project in the first place?",
+      "If I randomly got a task from this project in the next week, would I want to do it?",
+      "Who benefits most from me doing this?",
+    ];
+
     weight(): number {
       let now = new Date();
       return flattenedProjects.filter(
@@ -62,15 +71,7 @@
       document.windows[0].perspective = Perspective.BuiltIn.Review;
       document.windows[0].focus = null;
 
-      let prompts = [
-        "How will doing this project make the world a better place?",
-        "Will doing this project bring me joy?",
-        "Will doing this project get me closer to my goals?",
-        "Why did I add this project in the first place?",
-        "If I randomly got a task from this project in the next week, would I want to do it?",
-        "Who benefits most from me doing this?",
-      ];
-      let prompt = choose(prompts);
+      let prompt = choose(this.prompts);
 
       let alert = new Alert(
         "Review Projects",
@@ -81,6 +82,8 @@
   }
 
   class PullWork implements Strategy {
+    readonly sources = ["Linear", "GitHub", "your email"];
+
     weight(): number {
       // We could get a nicer weight here by looking at the available work
       // remotely, but it requires a lot of HTTP calls and caching. Meh.
@@ -111,8 +114,7 @@
     }
 
     enact() {
-      let sources = ["Linear", "GitHub", "your email"];
-      let source = choose(sources);
+      let source = choose(this.sources);
 
       let alert = new Alert(
         "Pull Work",
