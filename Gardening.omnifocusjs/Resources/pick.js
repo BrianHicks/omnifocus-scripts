@@ -77,6 +77,69 @@
             alert.show();
         }
     }
+    class DontDoATask {
+        constructor() {
+            this.thingsToTry = [
+                "Is the house happy?",
+                "Is your heart happy?",
+                "Have you taken care of your body?",
+                "Have you flossed?",
+                "Do you have water?",
+                "How about a little breath work?",
+                "Just sit for a bit.",
+                "Have you written down what's been on your mind?",
+                "What if everything turned out OK?",
+                "How about some push-ups?",
+                "How about some chin-ups?",
+                "What have you been avoiding?",
+                "What's not tracked?",
+                "What can you celebrate?",
+                "Relax for 10 seconds. Let your mind be a mirror.",
+                "Where are you fighting nature?",
+                "Where are you embracing nature?",
+                "How can you improve the chances of having happy accidents?",
+                "What has felt meaningful today?",
+                "What has felt meaningless today?",
+                "Ask Anne what I've been avoiding.",
+                "What's been working really well lately?",
+                "What systems haven't been working out so well lately?",
+                "Is the work you're doing in line with your values?",
+                "What are your values, again?",
+                "Where are you wasting time?",
+                "Where are you relying on discipline for safety?",
+                "What can be automated?",
+                "Do you have any time off scheduled? Figure it out!",
+                "How can you make what you're doing today more creative or joyful?",
+                "What's bugging you?",
+                "Are you doing your best to bring joy to others?",
+                "Are you doing your best to be joyful?",
+                "How can you be present in your life?",
+                "Have you made something cool lately?",
+                "How about cleaning something?",
+                "What don't you need anymore? Could someone else use it?",
+                "What could you recycle?",
+                "¿Has practicado español en Duolingo?",
+                "¿Qué has leído en español recientemente?",
+                "It's time for a break. What'd be restful right now?",
+                "How about finding something new and different to listen to?",
+                "How could things get less boring? Shenaniganize!",
+                "Who needs to know about the last thing you did?",
+                "Who haven't you talked to in a long time?",
+                "Whose expertise could be helpful right now?",
+                "When someone is talking, am I listening?",
+                "Be people leading people.",
+            ];
+        }
+        weight() {
+            // there are a lot here! This constant is gonna need some tweaking over time.
+            return this.thingsToTry.length / 3;
+        }
+        enact() {
+            let thingToTry = this.thingsToTry[Math.floor(Math.random() * this.thingsToTry.length)];
+            let alert = new Alert("And now for something completely different", thingToTry);
+            alert.show();
+        }
+    }
     class ChooseATask {
         constructor() {
             this.tasks = flattenedProjects
@@ -167,6 +230,7 @@
                 new ReviewProjects(),
                 new ChooseATask(),
                 new PullWork(),
+                new DontDoATask(),
             ];
             let weightedStrategies = strategies.map((s) => [
                 s,
