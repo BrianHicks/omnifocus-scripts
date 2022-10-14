@@ -8,7 +8,6 @@
             return { work: 0.8, personal: 0.2 };
         }
         else {
-            return { work: 0.8, personal: 0.2 };
             return { work: 0.0, personal: 1.0 };
         }
     };
