@@ -36,6 +36,17 @@
         enact() {
             document.windows[0].perspective = Perspective.BuiltIn.Review;
             document.windows[0].focus = null;
+            let prompts = [
+                "How will doing this project make the world a better place?",
+                "Will doing this project bring me joy?",
+                "Will doing this project get me closer to my goals?",
+                "Why did I add this project in the first place?",
+                "If I randomly got a task from this project in the next week, would I want to do it?",
+                "Who benefits most from me doing this?",
+            ];
+            let prompt = prompts[Math.floor(Math.random() * prompts.length)];
+            let alert = new Alert("Review Projects", `Review at least one project, considering this prompt:\n\n${prompt}`);
+            alert.show();
         }
     }
     class ChooseATask {
