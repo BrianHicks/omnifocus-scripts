@@ -9,6 +9,6 @@
       let pkgs = import inputs.nixpkgs { inherit system; };
       in {
         devShell =
-          pkgs.mkShell { packages = [ pkgs.nodePackages.typescript ]; };
+          pkgs.mkShell { packages = [ pkgs.nodePackages.typescript pkgs.nodePackages.prettier ]; };
       });
 }

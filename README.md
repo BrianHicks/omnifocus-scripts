@@ -25,3 +25,4 @@ Except for third-party icons and assets listed below, this code is released unde
 Exceptions:
 
 - The Linear logo icon is provided by [Linear in their Brand Guidelines](https://linear.app/docs/brand-guidelines) section, and does not have a license listed.
+- Other image icons from [Josh Hughes](https://omnifocusicons.josh-hughes.com/), licensed under "Please feel free to use the icons as you see fit"

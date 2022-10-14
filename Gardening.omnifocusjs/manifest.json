@@ -1,0 +1,13 @@
+{
+  "author": "Brian Hicks",
+  "identifier": "zone.bytes.gardening",
+  "defaultLocale": "en",
+  "version": "1.0",
+  "description": "Digital Gardening in OmniFocus",
+  "actions": [
+    {
+      "identifier": "pick",
+      "image": "pick.png"
+    }
+  ]
+}
