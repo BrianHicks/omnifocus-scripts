@@ -100,7 +100,7 @@
             const hour = now.getHours();
             const day = now.getDay();
             if (hour >= 8 && hour <= 17 && day != 0 && day != 6) {
-                return { work: 0.8, personal: 0.2 };
+                return { work: 0.9, personal: 0.1 };
             }
             else {
                 return { work: 0.0, personal: 1.0 };
