@@ -9,3 +9,5 @@ declare const inbox: Inbox
 declare const flattenedProjects : ProjectArray
 
 declare const flattenedTags : TagArray
+
+declare const flattenedTasks : TaskArray

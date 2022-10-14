@@ -49,6 +49,34 @@
             alert.show();
         }
     }
+    class PullWork {
+        weight() {
+            // We could get a nicer weight here by looking at the available work
+            // remotely, but it requires a lot of HTTP calls and caching. Meh.
+            //
+            // A simpler measure here is that it's nicer to pull work at the beginning
+            // and at the end of the workday. Or, more concretely, it's nicer to pull
+            // work before you do any or after you do a bunch.
+            let today = new Date();
+            let averageTasksPerDay = 17.2; // August, September, October 1-14 2022
+            let completedTasks = flattenedTasks.filter((task) => {
+                let completed = task.effectiveCompletedDate;
+                if (completed === null) {
+                    return false;
+                }
+                return (today.getFullYear() == completed.getFullYear() &&
+                    today.getMonth() == completed.getMonth() &&
+                    today.getDay() == completed.getDay());
+            });
+            return Math.min(averageTasksPerDay, Math.abs(averageTasksPerDay / 2 - completedTasks.length) * 2);
+        }
+        enact() {
+            let sources = ["Linear", "GitHub", "your email"];
+            let source = sources[Math.floor(Math.random() * sources.length)];
+            let alert = new Alert("Pull Work", `Go check ${source} for new work and get it tracked in here!`);
+            alert.show();
+        }
+    }
     class ChooseATask {
         constructor() {
             this.tasks = flattenedProjects
@@ -137,6 +165,7 @@
                 new ProcessInbox(),
                 new ReviewProjects(),
                 new ChooseATask(),
+                new PullWork(),
             ];
             let weightedStrategies = strategies.map((s) => [
                 s,
