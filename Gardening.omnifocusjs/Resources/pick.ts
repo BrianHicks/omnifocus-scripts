@@ -22,6 +22,23 @@
     return null;
   }
 
+  class ProcessInbox implements Strategy {
+    weight(): number {
+      return inbox.filter(
+        (t: Task) =>
+          t.taskStatus == Task.Status.Available ||
+          t.taskStatus == Task.Status.DueSoon ||
+          t.taskStatus == Task.Status.Next ||
+          t.taskStatus == Task.Status.Overdue
+      ).length;
+    }
+
+    enact() {
+      document.windows[0].perspective = Perspective.BuiltIn.Inbox;
+      document.windows[0].focus = null;
+    }
+  }
+
   class ChooseATask implements Strategy {
     tasks: Task[];
 
@@ -130,11 +147,13 @@
       // - reflection prompts (constant weight)
       // - stuff stolen from Taylor's nowify prompts
       // - the "choose a task" strategy below
-      let strategies = [new ChooseATask()];
+      let strategies = [new ProcessInbox(), new ChooseATask()];
+
       let weightedStrategies: [Strategy, number][] = strategies.map((s) => [
         s,
         s.weight(),
       ]);
+
       let chosen = weightedRandom(weightedStrategies);
       if (chosen) {
         chosen.enact();

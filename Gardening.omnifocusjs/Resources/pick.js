@@ -14,6 +14,18 @@
         }
         return null;
     }
+    class ProcessInbox {
+        weight() {
+            return inbox.filter((t) => t.taskStatus == Task.Status.Available ||
+                t.taskStatus == Task.Status.DueSoon ||
+                t.taskStatus == Task.Status.Next ||
+                t.taskStatus == Task.Status.Overdue).length;
+        }
+        enact() {
+            document.windows[0].perspective = Perspective.BuiltIn.Inbox;
+            document.windows[0].focus = null;
+        }
+    }
     class ChooseATask {
         constructor() {
             this.tasks = flattenedProjects
@@ -103,7 +115,7 @@
             // - reflection prompts (constant weight)
             // - stuff stolen from Taylor's nowify prompts
             // - the "choose a task" strategy below
-            let strategies = [new ChooseATask()];
+            let strategies = [new ProcessInbox(), new ChooseATask()];
             let weightedStrategies = strategies.map((s) => [
                 s,
                 s.weight(),
