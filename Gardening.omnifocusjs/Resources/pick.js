@@ -73,7 +73,16 @@
             }
             weightedTasks.push([task, ageWeight + dueWeight + categoryWeight]);
         }
-        return weightedRandom(weightedTasks);
+        let chosenTask = weightedRandom(weightedTasks);
+        if (chosenTask) {
+            document.windows[0].perspective = Perspective.BuiltIn.Projects;
+            if (chosenTask.containingProject) {
+                document.windows[0].focus = [
+                    chosenTask.containingProject,
+                ];
+            }
+            document.windows[0].selectObjects([chosenTask]);
+        }
     };
     var action = new PlugIn.Action(async () => {
         try {

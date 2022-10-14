@@ -54,7 +54,7 @@
     return null;
   };
 
-  var chooseATask = function (): Task | null {
+  var chooseATask = function () {
     let weights = getWeights();
     let now = new Date();
 
@@ -92,7 +92,16 @@
       weightedTasks.push([task, ageWeight + dueWeight + categoryWeight]);
     }
 
-    return weightedRandom(weightedTasks);
+    let chosenTask = weightedRandom(weightedTasks);
+    if (chosenTask) {
+      document.windows[0].perspective = Perspective.BuiltIn.Projects;
+      if (chosenTask.containingProject) {
+        document.windows[0].focus = [
+          chosenTask.containingProject,
+        ] as SectionArray;
+      }
+      document.windows[0].selectObjects([chosenTask]);
+    }
   };
 
   var action = new PlugIn.Action(async () => {
@@ -104,7 +113,7 @@
       // - reflection prompts (constant weight)
       // - stuff stolen from Taylor's nowify prompts
       // - the "choose a task" strategy below
-      chooseATask()
+      chooseATask();
     } catch (err) {
       console.error(err);
       throw err;
