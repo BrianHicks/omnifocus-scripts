@@ -289,11 +289,11 @@
       // - reflection prompts (constant weight)
       // - stuff stolen from Taylor's nowify prompts
       let strategies = [
-        new ProcessInbox(),
-        new ReviewProjects(),
         new ChooseATask(),
-        new PullWork(),
         new DontDoATask(),
+        new ProcessInbox(),
+        new PullWork(),
+        new ReviewProjects(),
       ];
 
       let weightedStrategies: [Strategy, number][] = strategies.map((s) => [
