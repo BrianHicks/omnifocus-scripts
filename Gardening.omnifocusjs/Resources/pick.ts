@@ -39,6 +39,23 @@
     }
   }
 
+  class ReviewProjects implements Strategy {
+    weight(): number {
+      let now = new Date();
+      return flattenedProjects.filter(
+        (p) =>
+          p.nextReviewDate <= now &&
+          (p.status == Project.Status.Active ||
+            p.status == Project.Status.OnHold)
+      ).length;
+    }
+
+    enact() {
+      document.windows[0].perspective = Perspective.BuiltIn.Review;
+      document.windows[0].focus = null;
+    }
+  }
+
   class ChooseATask implements Strategy {
     tasks: Task[];
 
@@ -147,7 +164,11 @@
       // - reflection prompts (constant weight)
       // - stuff stolen from Taylor's nowify prompts
       // - the "choose a task" strategy below
-      let strategies = [new ProcessInbox(), new ChooseATask()];
+      let strategies = [
+        new ProcessInbox(),
+        new ReviewProjects(),
+        new ChooseATask(),
+      ];
 
       let weightedStrategies: [Strategy, number][] = strategies.map((s) => [
         s,
