@@ -14,6 +14,12 @@
         }
         return null;
     }
+    function choose(items) {
+        if (items.length === 0) {
+            throw "cannot choose from an empty list";
+        }
+        return items[Math.floor(Math.random() * items.length)];
+    }
     class ProcessInbox {
         weight() {
             return inbox.filter((t) => t.taskStatus == Task.Status.Available ||
@@ -44,7 +50,7 @@
                 "If I randomly got a task from this project in the next week, would I want to do it?",
                 "Who benefits most from me doing this?",
             ];
-            let prompt = prompts[Math.floor(Math.random() * prompts.length)];
+            let prompt = choose(prompts);
             let alert = new Alert("Review Projects", `Review at least one project, considering this prompt:\n\n${prompt}`);
             alert.show();
         }
@@ -72,7 +78,7 @@
         }
         enact() {
             let sources = ["Linear", "GitHub", "your email"];
-            let source = sources[Math.floor(Math.random() * sources.length)];
+            let source = choose(sources);
             let alert = new Alert("Pull Work", `Go check ${source} for new work and get it tracked in here!`);
             alert.show();
         }
@@ -139,7 +145,7 @@
             return this.thingsToTry.length / 3;
         }
         enact() {
-            let thingToTry = this.thingsToTry[Math.floor(Math.random() * this.thingsToTry.length)];
+            let thingToTry = choose(this.thingsToTry);
             let alert = new Alert("And now for something completely different", thingToTry);
             alert.show();
         }
