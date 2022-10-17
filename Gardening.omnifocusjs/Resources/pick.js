@@ -21,6 +21,9 @@
         return items[Math.floor(Math.random() * items.length)];
     }
     class ProcessInbox {
+        constructor() {
+            this.name = "Process Inbox";
+        }
         weight() {
             return inbox.filter((t) => t.taskStatus == Task.Status.Available ||
                 t.taskStatus == Task.Status.DueSoon ||
@@ -34,6 +37,7 @@
     }
     class ReviewProjects {
         constructor() {
+            this.name = "Review Projects";
             this.prompts = [
                 "How will doing this project make the world a better place?",
                 "Will doing this project bring me joy?",
@@ -59,6 +63,7 @@
     }
     class PullWork {
         constructor() {
+            this.name = "Pull Work";
             this.sources = ["Linear", "GitHub", "your email"];
         }
         weight() {
@@ -89,6 +94,7 @@
     }
     class DontDoATask {
         constructor() {
+            this.name = "Don't Do a Task";
             // many of these prompts are inspired by Taylor Troesh's nowify. Big thanks
             // to Taylor for sharing the list that inspired this one!
             //
@@ -156,6 +162,7 @@
     }
     class ChooseATask {
         constructor() {
+            this.name = "Choose a Task";
             this.tasks = flattenedProjects
                 .filter((p) => p.status == Project.Status.Active)
                 .flatMap((p) => p.flattenedTasks.filter((t) => t.taskStatus == Task.Status.Available ||
@@ -246,8 +253,12 @@
                 s,
                 s.weight(),
             ]);
+            for (let pair of weightedStrategies) {
+                console.log(`weights: ${pair[0].name} was ${pair[1]}`);
+            }
             let chosen = weightedRandom(weightedStrategies);
             if (chosen) {
+                console.log(`chose ${chosen.name}`);
                 chosen.enact();
             }
         }

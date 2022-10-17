@@ -1,5 +1,6 @@
 (() => {
   interface Strategy {
+    name: string;
     weight(): number;
     enact(): void;
   }
@@ -31,6 +32,8 @@
   }
 
   class ProcessInbox implements Strategy {
+    readonly name = "Process Inbox";
+
     weight(): number {
       return inbox.filter(
         (t: Task) =>
@@ -48,6 +51,8 @@
   }
 
   class ReviewProjects implements Strategy {
+    readonly name = "Review Projects";
+
     readonly prompts = [
       "How will doing this project make the world a better place?",
       "Will doing this project bring me joy?",
@@ -82,6 +87,7 @@
   }
 
   class PullWork implements Strategy {
+    readonly name = "Pull Work";
     readonly sources = ["Linear", "GitHub", "your email"];
 
     weight(): number {
@@ -125,6 +131,8 @@
   }
 
   class DontDoATask implements Strategy {
+    readonly name = "Don't Do a Task";
+
     // many of these prompts are inspired by Taylor Troesh's nowify. Big thanks
     // to Taylor for sharing the list that inspired this one!
     //
@@ -197,6 +205,8 @@
   }
 
   class ChooseATask implements Strategy {
+    readonly name = "Choose a Task";
+
     tasks: Task[];
 
     constructor() {
@@ -304,14 +314,20 @@
         new PullWork(),
         new ReviewProjects(),
       ];
+      
 
       let weightedStrategies: [Strategy, number][] = strategies.map((s) => [
         s,
         s.weight(),
       ]);
+      
+      for (let pair of weightedStrategies) {
+        console.log(`weights: ${pair[0].name} was ${pair[1]}`)
+      }
 
       let chosen = weightedRandom(weightedStrategies);
       if (chosen) {
+        console.log(`chose ${chosen.name}`);
         chosen.enact();
       }
     } catch (err) {
