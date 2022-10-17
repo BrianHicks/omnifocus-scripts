@@ -266,7 +266,7 @@
       // TODO: weight phone calls during business hours too
 
       if (hour >= 8 && hour <= 17 && day != 0 && day != 6) {
-        return { work: 0.9, personal: 0.1 };
+        return { work: 2.0, personal: 0.0 };
       } else {
         return { work: 0.0, personal: 1.0 };
       }
