@@ -178,7 +178,7 @@
 
     weight(): number {
       // there are a lot here! This constant is gonna need some tweaking over time.
-      return this.thingsToTry.length / 3;
+      return this.thingsToTry.length / 4;
     }
 
     enact() {
