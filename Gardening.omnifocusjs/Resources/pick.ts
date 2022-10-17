@@ -86,47 +86,35 @@
     }
   }
 
-  class PullWork implements Strategy {
-    readonly name = "Pull Work";
-    readonly sources = ["Linear", "GitHub", "your email"];
+  class PullForTag implements Strategy {
+    readonly name: string;
+    readonly tag: Tag;
+
+    constructor(tagName: string) {
+      let tag = flattenedTags.byName(tagName);
+      if (tag === null) {
+        throw `Could not find a tag named "${tagName}"!`;
+      }
+
+      this.tag = tag;
+      this.name = `Pull from "${tagName}"`;
+    }
 
     weight(): number {
-      // We could get a nicer weight here by looking at the available work
-      // remotely, but it requires a lot of HTTP calls and caching. Meh.
-      //
-      // A simpler measure here is that it's nicer to pull work at the beginning
-      // and at the end of the workday. Or, more concretely, it's nicer to pull
-      // work before you do any or after you do a bunch.
-      let today = new Date();
-      let averageTasksPerDay = 17.2; // August, September, October 1-14 2022
-
-      let completedTasks = flattenedTasks.filter((task: Task) => {
-        let completed = task.effectiveCompletedDate;
-        if (completed === null) {
-          return false;
-        }
-
-        return (
-          today.getFullYear() == completed.getFullYear() &&
-          today.getMonth() == completed.getMonth() &&
-          today.getDay() == completed.getDay()
-        );
-      });
-
-      return Math.min(
-        averageTasksPerDay,
-        Math.abs(averageTasksPerDay / 2 - completedTasks.length) * 2
+      let activeTagTaskCount = this.tag.remainingTasks.length;
+      this.tag.flattenedChildren.forEach(
+        (child) => (activeTagTaskCount += child.remainingTasks.length)
       );
+
+      if (activeTagTaskCount > 0) {
+        return 0;
+      } else {
+        return 100;
+      }
     }
 
     enact() {
-      let source = choose(this.sources);
-
-      let alert = new Alert(
-        "Pull Work",
-        `Go check ${source} for new work and get it tracked in here!`
-      );
-      alert.show();
+      new Alert("Pull Work", `Add work to the "${this.tag.name}" tag!`).show();
     }
   }
 
@@ -311,18 +299,18 @@
         new ChooseATask(),
         new DontDoATask(),
         new ProcessInbox(),
-        new PullWork(),
         new ReviewProjects(),
+        new PullForTag("from Linear"),
+        new PullForTag("from GitHub"),
       ];
-      
 
       let weightedStrategies: [Strategy, number][] = strategies.map((s) => [
         s,
         s.weight(),
       ]);
-      
+
       for (let pair of weightedStrategies) {
-        console.log(`weights: ${pair[0].name} was ${pair[1]}`)
+        console.log(`weights: ${pair[0].name} was ${pair[1]}`);
       }
 
       let chosen = weightedRandom(weightedStrategies);
