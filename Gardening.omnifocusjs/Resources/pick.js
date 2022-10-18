@@ -139,7 +139,6 @@
                 "Who haven't you talked to in a long time?",
                 "Whose expertise could be helpful right now?",
                 "When someone is talking, am I listening?",
-                "Be people leading people.",
             ];
         }
         weight() {
