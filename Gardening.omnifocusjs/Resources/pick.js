@@ -129,7 +129,6 @@
                 "Have you made something cool lately?",
                 "How about cleaning something?",
                 "What don't you need anymore? Could someone else use it?",
-                "What could you recycle?",
                 "¿Has practicado español en Duolingo?",
                 "¿Qué has leído en español recientemente?",
                 "It's time for a break. What'd be restful right now?",
