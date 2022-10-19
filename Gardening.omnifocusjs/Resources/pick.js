@@ -143,7 +143,7 @@
         }
         weight() {
             // there are a lot here! This constant is gonna need some tweaking over time.
-            return this.thingsToTry.length / 4;
+            return this.thingsToTry.length / 5;
         }
         enact() {
             let thingToTry = choose(this.thingsToTry);
