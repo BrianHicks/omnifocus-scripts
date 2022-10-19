@@ -151,8 +151,9 @@
         }
     }
     class ChooseATask {
-        constructor() {
+        constructor(tagWeights) {
             this.name = "Choose a Task";
+            this.tagWeights = tagWeights;
             this.tasks = flattenedProjects
                 .filter((p) => p.status == Project.Status.Active)
                 .flatMap((p) => p.flattenedTasks.filter((t) => t.taskStatus == Task.Status.Available ||
@@ -164,16 +165,11 @@
             return this.tasks.length;
         }
         enact() {
-            let weights = this.getWeights();
             let now = new Date();
             let weightedTasks = [];
             for (let task of this.tasks) {
-                // weight some categories higher than others
-                let categoryWeight = 0;
-                let category = this.categorizeTask(task);
-                if (category) {
-                    categoryWeight = weights[category];
-                }
+                // start off by weighting based on tags
+                let tagWeight = this.tagWeightsForTask(task);
                 // weight stale-er tasks higher, up to 7 days
                 let ageWeight = 0;
                 if (task.modified) {
@@ -184,7 +180,7 @@
                 if (task.effectiveDueDate) {
                     dueWeight = 100 - this.daysBetween(now, task.effectiveDueDate);
                 }
-                weightedTasks.push([task, ageWeight + dueWeight + categoryWeight]);
+                weightedTasks.push([task, tagWeight + ageWeight + dueWeight]);
             }
             let chosenTask = weightedRandom(weightedTasks);
             if (chosenTask) {
@@ -197,43 +193,57 @@
                 document.windows[0].selectObjects([chosenTask]);
             }
         }
-        getWeights() {
-            const now = new Date();
-            const hour = now.getHours();
-            const day = now.getDay();
-            // TODO: weight phone calls during business hours too
-            if (hour >= 8 && hour <= 17 && day != 0 && day != 6) {
-                return { work: 2.0, personal: 0.0 };
-            }
-            else {
-                return { work: 0.0, personal: 1.0 };
-            }
-        }
-        categorizeTask(task) {
+        tagWeightsForTask(task) {
+            var weight = 0;
             var todo = task.tags;
-            while (todo.length != 0) {
+            var seen = [];
+            while (todo.length !== 0) {
                 let tag = todo.pop();
-                if (tag.name == "work") {
-                    return "work";
+                if (seen.indexOf(tag) !== -1) {
+                    continue;
                 }
-                else if (tag.name == "personal") {
-                    return "personal";
-                }
-                else if (tag.parent) {
+                weight += this.tagWeights[tag.name] || 0;
+                if (tag.parent) {
                     todo.push(tag.parent);
                 }
+                seen.push(tag);
             }
-            return null;
+            return weight;
         }
         daysBetween(a, b) {
             let millis = Math.abs(a.getTime() - b.getTime());
             return millis / 1000 / 60 / 60 / 24;
         }
     }
+    function getDuringWorkHours() {
+        const now = new Date();
+        const hour = now.getHours();
+        const day = now.getDay();
+        return hour >= 8 && hour <= 17 && day != 0 && day != 6;
+    }
     var action = new PlugIn.Action(async () => {
         try {
+            let duringWorkHours = getDuringWorkHours();
+            let weights = {};
+            if (duringWorkHours) {
+                weights = {
+                    work: 1,
+                    Kraken: 1,
+                    "Wandering Toolmaker": 1,
+                    "from Linear": 4,
+                    "from GitHub": 4,
+                };
+            }
+            else {
+                weights = {
+                    personal: 2,
+                    hobbies: 1,
+                    house: 1,
+                    reading: 3,
+                };
+            }
             let strategies = [
-                new ChooseATask(),
+                new ChooseATask(weights),
                 new DontDoATask(),
                 new ProcessInbox(),
                 new ReviewProjects(),

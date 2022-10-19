@@ -193,9 +193,12 @@
   class ChooseATask implements Strategy {
     readonly name = "Choose a Task";
 
+    tagWeights: { [key: string]: number };
     tasks: Task[];
 
-    constructor() {
+    constructor(tagWeights: { [key: string]: number }) {
+      this.tagWeights = tagWeights;
+
       this.tasks = flattenedProjects
         .filter((p) => p.status == Project.Status.Active)
         .flatMap((p) =>
@@ -214,18 +217,13 @@
     }
 
     enact() {
-      let weights = this.getWeights();
       let now = new Date();
 
       let weightedTasks: [Task, number][] = [];
 
       for (let task of this.tasks) {
-        // weight some categories higher than others
-        let categoryWeight = 0;
-        let category = this.categorizeTask(task);
-        if (category) {
-          categoryWeight = weights[category];
-        }
+        // start off by weighting based on tags
+        let tagWeight = this.tagWeightsForTask(task);
 
         // weight stale-er tasks higher, up to 7 days
         let ageWeight = 0;
@@ -239,7 +237,7 @@
           dueWeight = 100 - this.daysBetween(now, task.effectiveDueDate);
         }
 
-        weightedTasks.push([task, ageWeight + dueWeight + categoryWeight]);
+        weightedTasks.push([task, tagWeight + ageWeight + dueWeight]);
       }
 
       let chosenTask = weightedRandom(weightedTasks);
@@ -254,35 +252,25 @@
       }
     }
 
-    getWeights(): { work: number; personal: number } {
-      const now = new Date();
-      const hour = now.getHours();
-      const day = now.getDay();
+    tagWeightsForTask(task: Task): number {
+      var weight = 0;
 
-      // TODO: weight phone calls during business hours too
-
-      if (hour >= 8 && hour <= 17 && day != 0 && day != 6) {
-        return { work: 2.0, personal: 0.0 };
-      } else {
-        return { work: 0.0, personal: 1.0 };
-      }
-    }
-
-    categorizeTask(task: Task): "work" | "personal" | null {
       var todo = task.tags;
-      while (todo.length != 0) {
+      var seen: Tag[] = [];
+      while (todo.length !== 0) {
         let tag = todo.pop();
+        if (seen.indexOf(tag) !== -1) {
+          continue;
+        }
 
-        if (tag.name == "work") {
-          return "work";
-        } else if (tag.name == "personal") {
-          return "personal";
-        } else if (tag.parent) {
+        weight += this.tagWeights[tag.name] || 0;
+        if (tag.parent) {
           todo.push(tag.parent);
         }
+        seen.push(tag);
       }
 
-      return null;
+      return weight;
     }
 
     daysBetween(a: Date, b: Date): number {
@@ -291,10 +279,37 @@
     }
   }
 
+  function getDuringWorkHours(): boolean {
+    const now = new Date();
+    const hour = now.getHours();
+    const day = now.getDay();
+
+    return hour >= 8 && hour <= 17 && day != 0 && day != 6;
+  }
+
   var action = new PlugIn.Action(async () => {
     try {
+      let duringWorkHours = getDuringWorkHours();
+      let weights = {};
+      if (duringWorkHours) {
+        weights = {
+          work: 1,
+          Kraken: 1,
+          "Wandering Toolmaker": 1,
+          "from Linear": 4,
+          "from GitHub": 4,
+        };
+      } else {
+        weights = {
+          personal: 2,
+          hobbies: 1,
+          house: 1,
+          reading: 3,
+        };
+      }
+
       let strategies = [
-        new ChooseATask(),
+        new ChooseATask(weights),
         new DontDoATask(),
         new ProcessInbox(),
         new ReviewProjects(),
