@@ -89,15 +89,17 @@
   class PullForTag implements Strategy {
     readonly name: string;
     readonly tag: Tag;
+    readonly minimum: number;
 
-    constructor(tagName: string) {
+    constructor(tagName: string, minimum: number) {
       let tag = flattenedTags.byName(tagName);
       if (tag === null) {
         throw `Could not find a tag named "${tagName}"!`;
       }
 
-      this.tag = tag;
       this.name = `Pull from "${tagName}"`;
+      this.tag = tag;
+      this.minimum = minimum;
     }
 
     weight(): number {
@@ -106,11 +108,8 @@
         (child) => (activeTagTaskCount += child.remainingTasks.length)
       );
 
-      if (activeTagTaskCount > 0) {
-        return 0;
-      } else {
-        return 100;
-      }
+      let weight = Math.min(0, this.minimum - activeTagTaskCount);
+      return 100 * (weight / this.minimum);
     }
 
     enact() {
@@ -237,7 +236,9 @@
           dueWeight = 100 - this.daysBetween(now, task.effectiveDueDate);
         }
 
-        weightedTasks.push([task, tagWeight + ageWeight + dueWeight]);
+        let weight = tagWeight + ageWeight + dueWeight;
+        console.log(`${task.name}: ${weight}`);
+        weightedTasks.push([task, weight]);
       }
 
       let chosenTask = weightedRandom(weightedTasks);
@@ -313,8 +314,8 @@
         new DontDoATask(),
         new ProcessInbox(),
         new ReviewProjects(),
-        new PullForTag("from Linear"),
-        new PullForTag("from GitHub"),
+        new PullForTag("from Linear", 3),
+        new PullForTag("from GitHub", 1),
       ];
 
       let weightedStrategies: [Strategy, number][] = strategies.map((s) => [
