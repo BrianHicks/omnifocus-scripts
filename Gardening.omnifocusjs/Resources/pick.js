@@ -74,7 +74,7 @@
         weight() {
             let activeTagTaskCount = this.tag.remainingTasks.length;
             this.tag.flattenedChildren.forEach((child) => (activeTagTaskCount += child.remainingTasks.length));
-            let weight = Math.min(0, this.minimum - activeTagTaskCount);
+            let weight = Math.max(0, this.minimum - activeTagTaskCount);
             return 100 * (weight / this.minimum);
         }
         enact() {
