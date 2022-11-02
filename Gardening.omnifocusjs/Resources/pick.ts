@@ -50,6 +50,21 @@
     }
   }
 
+  class CheckEmail implements Strategy {
+    readonly name = "Check Email";
+
+    weight(): number {
+      return 5;
+    }
+
+    enact() {
+      new Alert(
+        "Check your email",
+        "Get as many items out of the inbox as possible!"
+      ).show();
+    }
+  }
+
   class ReviewProjects implements Strategy {
     readonly name = "Review Projects";
 
@@ -313,6 +328,7 @@
         new ChooseATask(weights),
         new DontDoATask(),
         new ProcessInbox(),
+        new CheckEmail(),
         new ReviewProjects(),
         new PullForTag("from Linear", 3),
         new PullForTag("from GitHub", 1),

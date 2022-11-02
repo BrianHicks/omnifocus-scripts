@@ -35,6 +35,17 @@
             document.windows[0].focus = null;
         }
     }
+    class CheckEmail {
+        constructor() {
+            this.name = "Check Email";
+        }
+        weight() {
+            return 5;
+        }
+        enact() {
+            new Alert("Check your email", "Get as many items out of the inbox as possible!").show();
+        }
+    }
     class ReviewProjects {
         constructor() {
             this.name = "Review Projects";
@@ -245,6 +256,7 @@
                 new ChooseATask(weights),
                 new DontDoATask(),
                 new ProcessInbox(),
+                new CheckEmail(),
                 new ReviewProjects(),
                 new PullForTag("from Linear", 3),
                 new PullForTag("from GitHub", 1),
