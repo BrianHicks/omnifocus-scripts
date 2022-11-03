@@ -101,6 +101,30 @@
     }
   }
 
+  class FillEmptyProject implements Strategy {
+    readonly name = "Fill Empty Projects";
+
+    projects: Project[];
+
+    constructor() {
+      this.projects = flattenedProjects.filter(
+        (p) => p.taskStatus == Task.Status.Next
+      );
+    }
+
+    weight(): number {
+      return this.projects.length * 10;
+    }
+
+    enact() {
+      let project = choose(this.projects);
+
+      document.windows[0].focus = [project] as SectionArray;
+
+      new Alert("Fill in Project", `Add tasks to ${project.name}`).show();
+    }
+  }
+
   class PullForTag implements Strategy {
     readonly name: string;
     readonly tag: Tag;
@@ -330,6 +354,7 @@
         new ProcessInbox(),
         new CheckEmail(),
         new ReviewProjects(),
+        new FillEmptyProject(),
         new PullForTag("from Linear", 3),
         new PullForTag("from GitHub", 1),
       ];

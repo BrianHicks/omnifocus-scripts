@@ -72,6 +72,20 @@
             alert.show();
         }
     }
+    class FillEmptyProject {
+        constructor() {
+            this.name = "Fill Empty Projects";
+            this.projects = flattenedProjects.filter((p) => p.taskStatus == Task.Status.Next);
+        }
+        weight() {
+            return this.projects.length * 10;
+        }
+        enact() {
+            let project = choose(this.projects);
+            document.windows[0].focus = [project];
+            new Alert("Fill in Project", `Add tasks to ${project.name}`).show();
+        }
+    }
     class PullForTag {
         constructor(tagName, minimum) {
             let tag = flattenedTags.byName(tagName);
@@ -258,6 +272,7 @@
                 new ProcessInbox(),
                 new CheckEmail(),
                 new ReviewProjects(),
+                new FillEmptyProject(),
                 new PullForTag("from Linear", 3),
                 new PullForTag("from GitHub", 1),
             ];
