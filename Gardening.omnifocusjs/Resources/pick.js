@@ -114,7 +114,6 @@
             //
             // https://taylor.town/projects/nowify
             this.thingsToTry = [
-                "Is the house happy?",
                 "Is your heart happy?",
                 "Have you flossed?",
                 "Do you have water?",
