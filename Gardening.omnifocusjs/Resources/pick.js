@@ -260,7 +260,7 @@
                 new CheckEmail(),
                 new ReviewProjects(),
                 new FillEmptyProject(),
-                new PullForTag("from Linear", 3),
+                new PullForTag("from Linear", 2),
                 new PullForTag("from GitHub", 1),
             ];
             let weightedStrategies = strategies.map((s) => [
