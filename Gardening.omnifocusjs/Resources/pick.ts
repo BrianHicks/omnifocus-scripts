@@ -249,22 +249,21 @@
       let weightedTasks: [Task, number][] = [];
 
       for (let task of this.tasks) {
+        let weight = 0;
+
         // start off by weighting based on tags
-        let tagWeight = this.tagWeightsForTask(task);
+        weight += this.tagWeightsForTask(task);
 
         // weight stale-er tasks higher, up to 7 days
-        let ageWeight = 0;
         if (task.modified) {
-          ageWeight = Math.min(7, this.daysBetween(now, task.modified)) / 7;
+          weight += Math.min(7, this.daysBetween(now, task.modified)) / 7;
         }
 
         // weight due-er tasks higher, up to 100 points
-        let dueWeight = 0;
         if (task.effectiveDueDate) {
-          dueWeight = 100 - this.daysBetween(now, task.effectiveDueDate);
+          weight += 100 - this.daysBetween(now, task.effectiveDueDate);
         }
 
-        let weight = tagWeight + ageWeight + dueWeight;
         console.log(`${task.name}: ${weight}`);
         weightedTasks.push([task, weight]);
       }
