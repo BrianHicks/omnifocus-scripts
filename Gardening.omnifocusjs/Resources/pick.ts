@@ -142,9 +142,9 @@
     }
 
     weight(): number {
-      let activeTagTaskCount = this.tag.remainingTasks.length;
+      let activeTagTaskCount = this.tag.availableTasks.length;
       this.tag.flattenedChildren.forEach(
-        (child) => (activeTagTaskCount += child.remainingTasks.length)
+        (child) => (activeTagTaskCount += child.availableTasks.length)
       );
 
       let weight = Math.max(0, this.minimum - activeTagTaskCount);

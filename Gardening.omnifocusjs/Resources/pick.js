@@ -97,8 +97,8 @@
             this.minimum = minimum;
         }
         weight() {
-            let activeTagTaskCount = this.tag.remainingTasks.length;
-            this.tag.flattenedChildren.forEach((child) => (activeTagTaskCount += child.remainingTasks.length));
+            let activeTagTaskCount = this.tag.availableTasks.length;
+            this.tag.flattenedChildren.forEach((child) => (activeTagTaskCount += child.availableTasks.length));
             let weight = Math.max(0, this.minimum - activeTagTaskCount);
             return 100 * (weight / this.minimum);
         }
