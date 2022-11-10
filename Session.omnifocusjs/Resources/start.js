@@ -8,21 +8,21 @@ don't! Modify the .ts file and run `tsc` instead!
         if (tag.name == "Wandering Toolmaker") {
             return tag.name;
         }
-        else if (tag.name == "teams" || (tag.parent && tag.parent.name == "teams") || tag.name == "work" || (tag.parent && tag.parent.name == "work")) {
+        else if (tag.name == "teams" ||
+            (tag.parent && tag.parent.name == "teams") ||
+            tag.name == "work" ||
+            (tag.parent && tag.parent.name == "work")) {
             return "Team";
         }
-        else if (tag.name == "personal" || (tag.parent && tag.parent.name == "personal")) {
+        else if (tag.name == "personal" ||
+            (tag.parent && tag.parent.name == "personal")) {
             return "Personal";
         }
         return null;
     }
     var action = new PlugIn.Action(async (selection, sender) => {
         try {
-            let possibleCategories = [
-                "Personal",
-                "Team",
-                "Wandering Toolmaker",
-            ];
+            let possibleCategories = ["Personal", "Team", "Wandering Toolmaker"];
             let defaultCategory = possibleCategories[0];
             let defaultProject = null;
             let defaultMinutes = "25";
@@ -76,7 +76,9 @@ don't! Modify the .ts file and run `tsc` instead!
         }
     });
     action.validate = function (selection, sender) {
-        return (selection.tasks.length === 1 || selection.tags.length === 1 || selection.projects.length === 1);
+        return (selection.tasks.length === 1 ||
+            selection.tags.length === 1 ||
+            selection.projects.length === 1);
     };
     return action;
 })();

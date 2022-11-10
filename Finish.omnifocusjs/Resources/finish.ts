@@ -1,10 +1,13 @@
 (() => {
   var action = new PlugIn.Action(async (selection: Selection, sender: any) => {
     try {
-      let originalTask = selection.tasks[0]
+      let originalTask = selection.tasks[0];
       originalTask.flagged = false;
 
-      let isDoneAlert = new Alert("Is this task completely done?", originalTask.name);
+      let isDoneAlert = new Alert(
+        "Is this task completely done?",
+        originalTask.name
+      );
       isDoneAlert.addOption("Yep!");
       isDoneAlert.addOption("Not quite");
       isDoneAlert.addOption("Whoops, never mind!");
@@ -20,7 +23,10 @@
         let currentSibling = originalTask;
 
         while (true) {
-          let nextThingAlert = new Alert("Is there anything that has to happen next?", currentSibling.name);
+          let nextThingAlert = new Alert(
+            "Is there anything that has to happen next?",
+            currentSibling.name
+          );
           nextThingAlert.addOption("Yep!");
           nextThingAlert.addOption("No, we're all done");
 
@@ -30,17 +36,21 @@
           }
 
           let nextSiblingForm = new Form();
-          nextSiblingForm.addField(new Form.Field.String("name", "What's Next?"));
+          nextSiblingForm.addField(
+            new Form.Field.String("name", "What's Next?")
+          );
           nextSiblingForm.addField(new Form.Field.String("note", "Notes"));
-          await nextSiblingForm.show(`What's the next thing that needs to happen after "${currentSibling.name}"?`, "Save");
+          await nextSiblingForm.show(
+            `What's the next thing that needs to happen after "${currentSibling.name}"?`,
+            "Save"
+          );
 
-          var values = nextSiblingForm.values as { name: string, note: string }
+          var values = nextSiblingForm.values as { name: string; note: string };
 
           currentSibling = new Task(values.name, currentSibling.after);
           currentSibling.note = values.note;
           currentSibling.addTags(originalTask.tags);
         }
-
       } else if (isDoneAnswer == 1) {
         /////////////////////////////
         // No, it's not quite done //
@@ -48,16 +58,22 @@
         let nextThingForm = new Form();
         nextThingForm.addField(new Form.Field.String("name", "What's Next?"));
         nextThingForm.addField(new Form.Field.String("note", "Notes"));
-        await nextThingForm.show(`What's the next thing that needs to happen to finish "${originalTask.name}"?`, "Save");
+        await nextThingForm.show(
+          `What's the next thing that needs to happen to finish "${originalTask.name}"?`,
+          "Save"
+        );
 
-        var values = nextThingForm.values as { name: string, note: string }
+        var values = nextThingForm.values as { name: string; note: string };
 
         let currentSibling = new Task(values.name, originalTask.beginning);
         currentSibling.note = values.note;
         currentSibling.addTags(originalTask.tags);
 
         while (true) {
-          let nextThingAlert = new Alert("Is there anything that'd have to happen after this is done?", currentSibling.name);
+          let nextThingAlert = new Alert(
+            "Is there anything that'd have to happen after this is done?",
+            currentSibling.name
+          );
           nextThingAlert.addOption("Yep!");
           nextThingAlert.addOption("No, not for now");
 
@@ -67,28 +83,34 @@
           }
 
           let nextSiblingForm = new Form();
-          nextSiblingForm.addField(new Form.Field.String("name", "What's Next?"));
+          nextSiblingForm.addField(
+            new Form.Field.String("name", "What's Next?")
+          );
           nextSiblingForm.addField(new Form.Field.String("note", "Notes"));
-          await nextSiblingForm.show(`What's the next thing that needs to happen after "${currentSibling.name}"?`, "Save");
+          await nextSiblingForm.show(
+            `What's the next thing that needs to happen after "${currentSibling.name}"?`,
+            "Save"
+          );
 
-          values = nextSiblingForm.values as { name: string, note: string }
+          values = nextSiblingForm.values as { name: string; note: string };
 
           currentSibling = new Task(values.name, currentSibling.after);
           currentSibling.note = values.note;
           currentSibling.addTags(originalTask.tags);
         }
-
       } else if (isDoneAnswer == 2) {
         ///////////////////////////////////////
         // Whoops, didn't mean to click that //
         ///////////////////////////////////////
         return;
-
       } else {
         /////////////////////////////////////////
         // We forgot how many answers we added //
         /////////////////////////////////////////
-        new Alert("Whoops!", `I got a value of '${isDoneAnswer}' from that alert, but I'm not sure what that means. This is a plugin bug!`)
+        new Alert(
+          "Whoops!",
+          `I got a value of '${isDoneAnswer}' from that alert, but I'm not sure what that means. This is a plugin bug!`
+        );
         return;
       }
     } catch (err) {
@@ -96,9 +118,9 @@
     }
   });
 
-  action.validate = function(selection: Selection, sender: any){
-    return (selection.tasks.length === 1 && !selection.tasks[0].hasChildren)
+  action.validate = function (selection: Selection, sender: any) {
+    return selection.tasks.length === 1 && !selection.tasks[0].hasChildren;
   };
-  
+
   return action;
 })();

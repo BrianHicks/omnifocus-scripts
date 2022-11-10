@@ -82,7 +82,7 @@
         }
     });
     action.validate = function (selection, sender) {
-        return (selection.tasks.length === 1 && !selection.tasks[0].hasChildren);
+        return selection.tasks.length === 1 && !selection.tasks[0].hasChildren;
     };
     return action;
 })();

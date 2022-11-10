@@ -26,17 +26,18 @@
             // Step 2: get the tasks //
             ///////////////////////////
             req.method = "POST";
-            req.bodyString = '{"query":"{ viewer { assignedIssues(filter: {state: {type: {nin: [\\"completed\\",\\"canceled\\"]}}}) { nodes { identifier title url team { name } project { name url } } } } }"}';
+            req.bodyString =
+                '{"query":"{ viewer { assignedIssues(filter: {state: {type: {nin: [\\"completed\\",\\"canceled\\"]}}}) { nodes { identifier title url team { name } project { name url } } } } }"}';
             req.headers = {
                 "Content-Type": "application/json",
-                "Authorization": key,
+                Authorization: key,
             };
-            let resp = await (req.fetch().catch((err) => {
+            let resp = await req.fetch().catch((err) => {
                 console.error("Problem fetching tasks:", err);
                 let alert = new Alert("Problem fetching from Linear", err);
                 alert.show();
                 throw err;
-            }));
+            });
             if (resp.bodyString === null) {
                 throw "body string was null. Did the request succeed?";
             }
@@ -47,7 +48,8 @@
             let toFocus = [];
             for (let linearTask of body.data.viewer.assignedIssues.nodes) {
                 let teamsTag = flattenedTags.byName("teams") || new Tag("teams");
-                let teamTag = teamsTag.tagNamed(linearTask.team.name) || new Tag(linearTask.team.name, teamsTag);
+                let teamTag = teamsTag.tagNamed(linearTask.team.name) ||
+                    new Tag(linearTask.team.name, teamsTag);
                 let linearTag = flattenedTags.byName("from Linear") || new Tag("from Linear");
                 let projectName = `${linearTask.team.name} Non-Project Tasks`;
                 if (linearTask.project !== null) {
@@ -59,7 +61,8 @@
                 project.containsSingletonActions = true;
                 project.status = Project.Status.Active;
                 toFocus.push(project);
-                if (linearTask.project && project.note.indexOf(linearTask.project.url) === -1) {
+                if (linearTask.project &&
+                    project.note.indexOf(linearTask.project.url) === -1) {
                     if (project.note !== "") {
                         project.appendStringToNote(`\n\n${linearTask.project.url}`);
                     }

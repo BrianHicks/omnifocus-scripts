@@ -33,14 +33,14 @@
             req.bodyString = `{"query":"{ search(type: ISSUE, query: \\"is:issue assignee:${login} state:open\\", last: 100) { nodes { ... on Issue { number title body url repository { name owner { login } } } } } }"}`;
             req.headers = {
                 "Content-Type": "application/json",
-                "Authorization": `bearer ${key}`,
+                Authorization: `bearer ${key}`,
             };
-            let resp = await (req.fetch().catch((err) => {
+            let resp = await req.fetch().catch((err) => {
                 console.error("Problem fetching issues:", err);
                 let alert = new Alert("Problem fetching from GitHub", err);
                 alert.show();
                 throw err;
-            }));
+            });
             if (resp.bodyString === null) {
                 throw "body string was null. Did the request succeed?";
             }
@@ -48,8 +48,10 @@
             let toFocus = [];
             for (let issue of body.data.search.nodes) {
                 let gitHubTag = flattenedTags.byName("from GitHub") || new Tag("from GitHub");
-                let orgTag = gitHubTag.tagNamed(issue.repository.owner.login) || new Tag(issue.repository.owner.login, gitHubTag);
-                let repoTag = orgTag.tagNamed(issue.repository.name) || new Tag(issue.repository.name, orgTag);
+                let orgTag = gitHubTag.tagNamed(issue.repository.owner.login) ||
+                    new Tag(issue.repository.owner.login, gitHubTag);
+                let repoTag = orgTag.tagNamed(issue.repository.name) ||
+                    new Tag(issue.repository.name, orgTag);
                 let repo = `${issue.repository.owner.login}/${issue.repository.name}`;
                 let projectName = `${repo}#${issue.number}: ${issue.title}`;
                 let project = flattenedProjects.byName(projectName) || new Project(projectName);
