@@ -57,6 +57,7 @@
                 project.addTag(teamTag);
                 project.addTag(linearTag);
                 project.containsSingletonActions = true;
+                project.status = Project.Status.Active;
                 toFocus.push(project);
                 if (linearTask.project && project.note.indexOf(linearTask.project.url) === -1) {
                     if (project.note !== "") {
@@ -70,6 +71,7 @@
                 let task = project.taskNamed(taskName) || new Task(taskName, project);
                 task.addTag(teamTag);
                 task.addTag(linearTag);
+                task.markIncomplete();
                 if (task.note.indexOf(linearTask.url) === -1) {
                     if (task.note !== "") {
                         task.appendStringToNote(`\n\n${linearTask.url}`);
