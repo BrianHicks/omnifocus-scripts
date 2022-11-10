@@ -91,6 +91,7 @@
         let project =
           flattenedProjects.byName(projectName) || new Project(projectName);
         project.addTag(repoTag);
+        project.status = Project.Status.Active;
         project.note = `${issue.url}\n\n---\n\n${issue.body}`;
         toFocus.push(project);
 
