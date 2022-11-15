@@ -87,7 +87,8 @@
         }
     }
     class PullForTag {
-        constructor(tagName, minimum) {
+        constructor(tagName, minimum, onlyEveryHours) {
+            this.prefKey = "last pulled";
             let tag = flattenedTags.byName(tagName);
             if (tag === null) {
                 throw `Could not find a tag named "${tagName}"!`;
@@ -95,14 +96,27 @@
             this.name = `Pull from "${tagName}"`;
             this.tag = tag;
             this.minimum = minimum;
+            this.onlyEveryHours = onlyEveryHours;
+            this.pref = new Preferences(`Pull for Tag "${tag}"`);
         }
         weight() {
+            let lastPulled = this.pref.readDate(this.prefKey);
+            if (lastPulled &&
+                this.hoursBetween(lastPulled, new Date()) < this.onlyEveryHours) {
+                console.log(`pulled "${this.tag.name}" too recently; skipping!`);
+                return null;
+            }
             let activeTagTaskCount = this.tag.availableTasks.length;
             this.tag.flattenedChildren.forEach((child) => (activeTagTaskCount += child.availableTasks.length));
             let weight = Math.max(0, this.minimum - activeTagTaskCount);
             return 100 * (weight / this.minimum);
         }
+        hoursBetween(a, b) {
+            let millis = Math.abs(a.getTime() - b.getTime());
+            return millis / 1000 / 60 / 60;
+        }
         enact() {
+            this.pref.write(this.prefKey, new Date());
             new Alert("Pull Work", `Add work to the "${this.tag.name}" tag!`).show();
         }
     }
@@ -260,14 +274,17 @@
                 new CheckEmail(),
                 new ReviewProjects(),
                 new FillEmptyProject(),
-                new PullForTag("from Linear", 1),
-                new PullForTag("from GitHub", 1),
+                new PullForTag("from Linear", 1, 1),
+                new PullForTag("from GitHub", 1, 4),
             ];
             let weightedStrategies = [];
             strategies.forEach((s) => {
                 let weight = s.weight();
                 if (weight) {
                     weightedStrategies.push([s, weight]);
+                }
+                else {
+                    console.log(`skipping ${s.name}`);
                 }
             });
             for (let pair of weightedStrategies) {
