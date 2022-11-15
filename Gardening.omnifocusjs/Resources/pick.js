@@ -51,6 +51,7 @@
             let lastCheck = this.pref.readDate(this.prefKey);
             if (lastCheck &&
                 hoursBetween(lastCheck, new Date()) < this.onlyEveryHours) {
+                console.log("checked email too recently; skipping!");
                 return null;
             }
             return 5;
