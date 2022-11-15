@@ -305,6 +305,14 @@
           weight += 100 - this.daysBetween(now, task.effectiveDueDate);
         }
 
+        // weight recurring tasks higher
+        if (task.repetitionRule && task.effectiveDeferDate) {
+          weight += Math.max(
+            14,
+            this.daysBetween(now, task.effectiveDeferDate)
+          );
+        }
+
         console.log(`${task.name}: ${weight}`);
         weightedTasks.push([task, weight]);
       }
