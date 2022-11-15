@@ -35,14 +35,28 @@
             document.windows[0].focus = null;
         }
     }
+    function hoursBetween(a, b) {
+        let millis = Math.abs(a.getTime() - b.getTime());
+        return millis / 1000 / 60 / 60;
+    }
     class CheckEmail {
-        constructor() {
+        constructor(onlyEveryHours) {
             this.name = "Check Email";
+            this.prefName = "task picker email task";
+            this.prefKey = "last check";
+            this.onlyEveryHours = onlyEveryHours;
+            this.pref = new Preferences(this.prefName);
         }
         weight() {
+            let lastCheck = this.pref.readDate(this.prefKey);
+            if (lastCheck &&
+                hoursBetween(lastCheck, new Date()) > this.onlyEveryHours) {
+                return null;
+            }
             return 5;
         }
         enact() {
+            this.pref.write(this.prefKey, new Date());
             new Alert("Check your email", "Get as many items out of the inbox as possible!").show();
         }
     }
@@ -102,7 +116,7 @@
         weight() {
             let lastPulled = this.pref.readDate(this.prefKey);
             if (lastPulled &&
-                this.hoursBetween(lastPulled, new Date()) < this.onlyEveryHours) {
+                hoursBetween(lastPulled, new Date()) < this.onlyEveryHours) {
                 console.log(`pulled "${this.tag.name}" too recently; skipping!`);
                 return null;
             }
@@ -110,10 +124,6 @@
             this.tag.flattenedChildren.forEach((child) => (activeTagTaskCount += child.availableTasks.length));
             let weight = Math.max(0, this.minimum - activeTagTaskCount);
             return 100 * (weight / this.minimum);
-        }
-        hoursBetween(a, b) {
-            let millis = Math.abs(a.getTime() - b.getTime());
-            return millis / 1000 / 60 / 60;
         }
         enact() {
             this.pref.write(this.prefKey, new Date());
@@ -271,7 +281,7 @@
                 new ChooseATask(weights),
                 new DontDoATask(),
                 new ProcessInbox(),
-                new CheckEmail(),
+                new CheckEmail(2),
                 new ReviewProjects(),
                 new FillEmptyProject(),
                 new PullForTag("from Linear", 1, 1),

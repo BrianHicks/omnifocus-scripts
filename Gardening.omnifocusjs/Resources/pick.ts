@@ -50,14 +50,39 @@
     }
   }
 
+  function hoursBetween(a: Date, b: Date): number {
+    let millis = Math.abs(a.getTime() - b.getTime());
+    return millis / 1000 / 60 / 60;
+  }
+
   class CheckEmail implements Strategy {
     readonly name = "Check Email";
 
-    weight(): number {
+    readonly onlyEveryHours: number;
+    readonly pref: Preferences;
+    readonly prefName = "task picker email task";
+    readonly prefKey = "last check";
+
+    constructor(onlyEveryHours: number) {
+      this.onlyEveryHours = onlyEveryHours;
+      this.pref = new Preferences(this.prefName);
+    }
+
+    weight(): null | number {
+      let lastCheck = this.pref.readDate(this.prefKey);
+      if (
+        lastCheck &&
+        hoursBetween(lastCheck, new Date()) > this.onlyEveryHours
+      ) {
+        return null;
+      }
+
       return 5;
     }
 
     enact() {
+      this.pref.write(this.prefKey, new Date());
+
       new Alert(
         "Check your email",
         "Get as many items out of the inbox as possible!"
@@ -151,7 +176,7 @@
       let lastPulled = this.pref.readDate(this.prefKey);
       if (
         lastPulled &&
-        this.hoursBetween(lastPulled, new Date()) < this.onlyEveryHours
+        hoursBetween(lastPulled, new Date()) < this.onlyEveryHours
       ) {
         console.log(`pulled "${this.tag.name}" too recently; skipping!`);
         return null;
@@ -164,11 +189,6 @@
 
       let weight = Math.max(0, this.minimum - activeTagTaskCount);
       return 100 * (weight / this.minimum);
-    }
-
-    hoursBetween(a: Date, b: Date): number {
-      let millis = Math.abs(a.getTime() - b.getTime());
-      return millis / 1000 / 60 / 60;
     }
 
     enact() {
@@ -361,7 +381,7 @@
         new ChooseATask(weights),
         new DontDoATask(),
         new ProcessInbox(),
-        new CheckEmail(),
+        new CheckEmail(2),
         new ReviewProjects(),
         new FillEmptyProject(),
         new PullForTag("from Linear", 1, 1),
