@@ -72,7 +72,7 @@
       let lastCheck = this.pref.readDate(this.prefKey);
       if (
         lastCheck &&
-        hoursBetween(lastCheck, new Date()) > this.onlyEveryHours
+        hoursBetween(lastCheck, new Date()) < this.onlyEveryHours
       ) {
         return null;
       }
