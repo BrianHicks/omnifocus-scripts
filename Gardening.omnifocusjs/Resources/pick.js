@@ -263,10 +263,13 @@
                 new PullForTag("from Linear", 1),
                 new PullForTag("from GitHub", 1),
             ];
-            let weightedStrategies = strategies.map((s) => [
-                s,
-                s.weight(),
-            ]);
+            let weightedStrategies = [];
+            strategies.forEach((s) => {
+                let weight = s.weight();
+                if (weight) {
+                    weightedStrategies.push([s, weight]);
+                }
+            });
             for (let pair of weightedStrategies) {
                 console.log(`weights: ${pair[0].name} was ${pair[1]}`);
             }

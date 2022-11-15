@@ -1,7 +1,7 @@
 (() => {
   interface Strategy {
     name: string;
-    weight(): number;
+    weight(): null | number;
     enact(): void;
   }
 
@@ -141,7 +141,7 @@
       this.minimum = minimum;
     }
 
-    weight(): number {
+    weight(): null | number {
       let activeTagTaskCount = this.tag.availableTasks.length;
       this.tag.flattenedChildren.forEach(
         (child) => (activeTagTaskCount += child.availableTasks.length)
@@ -347,10 +347,14 @@
         new PullForTag("from GitHub", 1),
       ];
 
-      let weightedStrategies: [Strategy, number][] = strategies.map((s) => [
-        s,
-        s.weight(),
-      ]);
+      let weightedStrategies: [Strategy, number][] = [];
+      strategies.forEach((s) => {
+        let weight = s.weight();
+
+        if (weight) {
+          weightedStrategies.push([s, weight]);
+        }
+      });
 
       for (let pair of weightedStrategies) {
         console.log(`weights: ${pair[0].name} was ${pair[1]}`);
