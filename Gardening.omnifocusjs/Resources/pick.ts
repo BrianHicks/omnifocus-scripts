@@ -391,7 +391,7 @@
       let weights = {};
       if (duringWorkHours) {
         weights = {
-          work: 1,
+          work: 2,
           Kraken: 1,
           "Wandering Toolmaker": 1,
           "from Linear": 4,
