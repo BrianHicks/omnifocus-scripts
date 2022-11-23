@@ -132,8 +132,10 @@
         }
     }
     class DontDoATask {
-        constructor() {
+        constructor(onlyEveryHours) {
             this.name = "Don't Do a Task";
+            this.prefName = "non-task task";
+            this.prefKey = "last non-task task";
             // many of these prompts are inspired by Taylor Troesh's nowify. Big thanks
             // to Taylor for sharing the list that inspired this one!
             //
@@ -175,12 +177,21 @@
                 "Who haven't you talked to in a long time?",
                 "Whose expertise could be helpful right now?",
             ];
+            this.onlyEveryHours = onlyEveryHours;
+            this.pref = new Preferences(this.prefName);
         }
         weight() {
+            let lastCheck = this.pref.readDate(this.prefKey);
+            if (lastCheck &&
+                hoursBetween(lastCheck, new Date()) < this.onlyEveryHours) {
+                console.log("checked email too recently; skipping!");
+                return null;
+            }
             // there are a lot here! This constant is gonna need some tweaking over time.
             return this.thingsToTry.length / 4;
         }
         enact() {
+            this.pref.write(this.prefKey, new Date());
             let thingToTry = choose(this.thingsToTry);
             let alert = new Alert("And now for something completely different", thingToTry);
             alert.show();
@@ -284,7 +295,7 @@
             }
             let strategies = [
                 new ChooseATask(weights),
-                new DontDoATask(),
+                new DontDoATask(0.5),
                 new ProcessInbox(),
                 new CheckEmail(2),
                 new ReviewProjects(),

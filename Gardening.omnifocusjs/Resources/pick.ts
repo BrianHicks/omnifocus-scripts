@@ -201,6 +201,11 @@
   class DontDoATask implements Strategy {
     readonly name = "Don't Do a Task";
 
+    readonly onlyEveryHours: number;
+    readonly pref: Preferences;
+    readonly prefName = "non-task task";
+    readonly prefKey = "last non-task task";
+
     // many of these prompts are inspired by Taylor Troesh's nowify. Big thanks
     // to Taylor for sharing the list that inspired this one!
     //
@@ -243,12 +248,27 @@
       "Whose expertise could be helpful right now?",
     ];
 
-    weight(): number {
+    constructor(onlyEveryHours: number) {
+      this.onlyEveryHours = onlyEveryHours;
+      this.pref = new Preferences(this.prefName);
+    }
+
+    weight(): number | null {
+      let lastCheck = this.pref.readDate(this.prefKey);
+      if (
+        lastCheck &&
+        hoursBetween(lastCheck, new Date()) < this.onlyEveryHours
+      ) {
+        console.log("checked email too recently; skipping!");
+        return null;
+      }
+
       // there are a lot here! This constant is gonna need some tweaking over time.
       return this.thingsToTry.length / 4;
     }
 
     enact() {
+      this.pref.write(this.prefKey, new Date());
       let thingToTry = choose(this.thingsToTry);
 
       let alert = new Alert(
@@ -388,7 +408,7 @@
 
       let strategies = [
         new ChooseATask(weights),
-        new DontDoATask(),
+        new DontDoATask(0.5),
         new ProcessInbox(),
         new CheckEmail(2),
         new ReviewProjects(),
