@@ -61,6 +61,29 @@
             new Alert("Check your email", "Get as many items out of the inbox as possible!").show();
         }
     }
+    class UpdateDailyLog {
+        constructor(onlyEveryHours) {
+            this.name = "Update Daily Log";
+            this.prefName = "task picker logging task";
+            this.prefKey = "last update";
+            this.onlyEveryHours = onlyEveryHours;
+            this.pref = new Preferences(this.prefName);
+        }
+        weight() {
+            let lastCheck = this.pref.readDate(this.prefKey);
+            let timeSince = hoursBetween(lastCheck || new Date(), new Date());
+            if (lastCheck && timeSince < this.onlyEveryHours) {
+                console.log("updated log too recently; skipping!");
+                return null;
+            }
+            return 10 * (timeSince / 2);
+        }
+        enact() {
+            let lastCheck = this.pref.readDate(this.prefKey);
+            new Alert("Update the daily log in Obsidian", `What's happened since ${lastCheck}?`).show();
+            this.pref.write(this.prefKey, new Date());
+        }
+    }
     class ReviewProjects {
         constructor() {
             this.name = "Review Projects";
@@ -302,6 +325,7 @@
                 new FillEmptyProject(),
                 new PullForTag("from Linear", 1, 1),
                 new PullForTag("from GitHub", 1, 4),
+                new UpdateDailyLog(0.5),
             ];
             let weightedStrategies = [];
             strategies.forEach((s) => {
