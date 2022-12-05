@@ -71,7 +71,7 @@
         }
         weight() {
             let lastCheck = this.pref.readDate(this.prefKey);
-            let timeSince = hoursBetween(lastCheck || new Date(), new Date());
+            let timeSince = hoursBetween(lastCheck || new Date(1970, 1, 1), new Date());
             if (lastCheck && timeSince < this.onlyEveryHours) {
                 console.log("updated log too recently; skipping!");
                 return null;
