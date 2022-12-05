@@ -450,7 +450,7 @@
         new ReviewProjects(),
         new FillEmptyProject(),
         new PullForTag("from Linear", 1, 1),
-        new PullForTag("from GitHub", 1, 4),
+        // new PullForTag("from GitHub", 1, 4),
         new UpdateDailyLog(0.5),
       ];
 
