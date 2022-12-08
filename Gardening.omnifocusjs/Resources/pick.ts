@@ -370,7 +370,7 @@
           );
         }
 
-        console.log(`${task.name}: ${weight}`);
+        console.log(`${Math.round(weight * 100) / 100}\t${task.name}`);
         weightedTasks.push([task, weight]);
       }
 
