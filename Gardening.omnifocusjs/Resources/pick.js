@@ -253,6 +253,9 @@
                 if (task.repetitionRule && task.effectiveDeferDate) {
                     weight += Math.max(14, this.daysBetween(now, task.effectiveDeferDate));
                 }
+                else if (task.added) {
+                    weight += Math.max(7, this.daysBetween(now, task.added));
+                }
                 console.log(`${Math.round(weight * 100) / 100}\t${task.name}`);
                 weightedTasks.push([task, weight]);
             }
