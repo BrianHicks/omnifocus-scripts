@@ -371,6 +371,8 @@
             14,
             this.daysBetween(now, task.effectiveDeferDate)
           );
+        } else if (task.effectiveDeferDate) {
+          weight += Math.max(7, this.daysBetween(now, task.effectiveDeferDate));
         } else if (task.added) {
           weight += Math.max(7, this.daysBetween(now, task.added));
         }
