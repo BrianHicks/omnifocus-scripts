@@ -254,10 +254,10 @@
                     weight += Math.max(14, this.daysBetween(now, task.effectiveDeferDate) * 2);
                 }
                 else if (task.effectiveDeferDate) {
-                    weight += Math.max(7, this.daysBetween(now, task.effectiveDeferDate));
+                    weight += Math.max(7, this.daysBetween(now, task.effectiveDeferDate)) / 2;
                 }
                 else if (task.added) {
-                    weight += Math.max(7, this.daysBetween(now, task.added));
+                    weight += Math.max(7, this.daysBetween(now, task.added)) / 2;
                 }
                 console.log(`${Math.round(weight * 100) / 100}\t${task.name}`);
                 weightedTasks.push([task, weight]);
