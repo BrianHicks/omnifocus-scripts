@@ -264,6 +264,7 @@
             }
             let chosenTask = weightedRandom(weightedTasks);
             if (chosenTask) {
+                console.log(`chosen task: ${chosenTask.name}`);
                 document.windows[0].perspective = Perspective.BuiltIn.Projects;
                 if (chosenTask.containingProject) {
                     document.windows[0].focus = [
