@@ -369,7 +369,7 @@
         if (task.repetitionRule && task.effectiveDeferDate) {
           weight += Math.max(
             14,
-            this.daysBetween(now, task.effectiveDeferDate)
+            this.daysBetween(now, task.effectiveDeferDate) * 2
           );
         } else if (task.effectiveDeferDate) {
           weight += Math.max(7, this.daysBetween(now, task.effectiveDeferDate));
