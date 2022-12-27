@@ -436,18 +436,18 @@
       let weights = {};
       if (duringWorkHours) {
         weights = {
-          work: 2,
-          Kraken: 1,
-          "Wandering Toolmaker": 1,
-          "from Linear": 4,
-          "from GitHub": 4,
+          work: 4,
+          Kraken: 2,
+          "Wandering Toolmaker": 2,
+          "from Linear": 8,
+          "from GitHub": 8,
         };
       } else {
         weights = {
-          personal: 2,
-          hobbies: 1,
-          house: 1,
-          reading: 3,
+          personal: 4,
+          hobbies: 2,
+          house: 2,
+          reading: 6,
         };
       }
 
