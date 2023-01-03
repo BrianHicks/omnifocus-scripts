@@ -154,72 +154,6 @@
             new Alert("Pull Work", `Add work to the "${this.tag.name}" tag!`).show();
         }
     }
-    class DontDoATask {
-        constructor(onlyEveryHours) {
-            this.name = "Don't Do a Task";
-            this.prefName = "non-task task";
-            this.prefKey = "last non-task task";
-            // many of these prompts are inspired by Taylor Troesh's nowify. Big thanks
-            // to Taylor for sharing the list that inspired this one!
-            //
-            // https://taylor.town/projects/nowify
-            this.thingsToTry = [
-                "Is your heart happy?",
-                "Have you flossed?",
-                "Do you have water?",
-                "How about a little breath work?",
-                "Just sit for a bit.",
-                "Have you written down what's been on your mind?",
-                "What if everything turned out OK?",
-                "What have you been avoiding?",
-                "What's not tracked?",
-                "What can you celebrate?",
-                "Relax for 10 seconds. Let your mind be a mirror.",
-                "How can you improve the chances of having happy accidents?",
-                "What has felt meaningful today?",
-                "What has felt meaningless today?",
-                "What's been working really well lately?",
-                "What systems haven't been working out so well lately?",
-                "Is the work you're doing in line with your values?",
-                "What are your values, again?",
-                "Where are you wasting time?",
-                "Where are you relying on discipline for safety?",
-                "What can be automated?",
-                "Do you have any time off scheduled? Figure it out!",
-                "How can you make what you're doing today more creative or joyful?",
-                "What's bugging you?",
-                "How can you be present in your life?",
-                "Have you made something cool lately?",
-                "How about cleaning something?",
-                "¿Has practicado español en Duolingo?",
-                "¿Qué has leído en español recientemente?",
-                "It's time for a break. What'd be restful right now?",
-                "How about finding something new and different to listen to?",
-                "How could things get less boring? Shenaniganize!",
-                "Who needs to know about the last thing you did?",
-                "Who haven't you talked to in a long time?",
-                "Whose expertise could be helpful right now?",
-            ];
-            this.onlyEveryHours = onlyEveryHours;
-            this.pref = new Preferences(this.prefName);
-        }
-        weight() {
-            let lastCheck = this.pref.readDate(this.prefKey);
-            if (lastCheck &&
-                hoursBetween(lastCheck, new Date()) < this.onlyEveryHours) {
-                console.log("checked email too recently; skipping!");
-                return null;
-            }
-            // there are a lot here! This constant is gonna need some tweaking over time.
-            return this.thingsToTry.length / 4;
-        }
-        enact() {
-            this.pref.write(this.prefKey, new Date());
-            let thingToTry = choose(this.thingsToTry);
-            let alert = new Alert("And now for something completely different", thingToTry);
-            alert.show();
-        }
-    }
     class ChooseATask {
         constructor(tagWeights) {
             this.name = "Choose a Task";
@@ -325,7 +259,6 @@
             }
             let strategies = [
                 new ChooseATask(weights),
-                new DontDoATask(0.5),
                 new ProcessInbox(),
                 new CheckEmail(2),
                 new ReviewProjects(),
