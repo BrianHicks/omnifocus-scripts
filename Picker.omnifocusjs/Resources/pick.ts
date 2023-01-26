@@ -17,7 +17,7 @@
     return null;
   }
 
-  class ChooseATask {
+  class FlagTasks {
     tagWeights: { [key: string]: number };
     tasks: Task[];
 
@@ -45,46 +45,22 @@
       for (let task of this.tasks) {
         let weight = 0;
 
-        // start off by weighting based on tags
-        weight += this.tagWeightsForTask(task);
-
-        // weight stale-er tasks higher, up to 7 days
-        if (task.modified) {
-          weight += Math.min(7, this.daysBetween(now, task.modified)) / 7;
-        }
-
-        // weight due-er tasks higher, up to 100 points
+        // tasks that are closer to their due date should be weighted higher, up
+        // to three weeks out
         if (task.effectiveDueDate) {
-          weight += 100 - this.daysBetween(now, task.effectiveDueDate);
+          weight += Math.max(0, 21 - this.daysBetween(now, task.effectiveDueDate));
         }
 
-        // weight recurring tasks higher
-        if (task.repetitionRule && task.effectiveDeferDate) {
-          weight += Math.max(
-            14,
-            this.daysBetween(now, task.effectiveDeferDate) * 2
-          );
-        } else if (task.effectiveDeferDate) {
-          weight += Math.max(7, this.daysBetween(now, task.effectiveDeferDate)) / 2;
-        } else if (task.added) {
-          weight += Math.max(7, this.daysBetween(now, task.added)) / 2;
-        }
+        // tasks that have been deferred should grow in urgency from their
+        // deferral date. This includes repeating tasks! Otherwise, they should
+        // grow in urgency according to when they were created. If both dates
+        // are somehow null, it's OK to not add any weight to the task.
+        weight += Math.max(14, this.daysBetween(now, task.effectiveDeferDate || task.added || now))
 
-        console.log(`${Math.round(weight * 100) / 100}\t${task.name}`);
-        weightedTasks.push([task, weight]);
-      }
+        // add weights from tags
+        weight += this.tagWeightsForTask(task)
 
-      let chosenTask = weightedRandom(weightedTasks);
-      if (chosenTask) {
-        console.log(`chosen task: ${chosenTask.name}`);
-
-        document.windows[0].perspective = Perspective.BuiltIn.Projects;
-        if (chosenTask.containingProject) {
-          document.windows[0].focus = [
-            chosenTask.containingProject,
-          ] as SectionArray;
-        }
-        document.windows[0].selectObjects([chosenTask]);
+        weightedTasks.push([task, weight])
       }
     }
 
@@ -143,7 +119,7 @@
         };
       }
 
-      new ChooseATask(weights).enact();
+      new FlagTasks(weights).enact();
     } catch (err) {
       console.error(err);
       throw err;
