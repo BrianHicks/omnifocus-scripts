@@ -85,6 +85,7 @@
         }
 
         next.flagged = true
+        this.currentlyFlagged++
       }
     }
 

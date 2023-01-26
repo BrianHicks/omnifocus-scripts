@@ -58,6 +58,7 @@
                     next = weightedRandom(weightedTasks);
                 }
                 next.flagged = true;
+                this.currentlyFlagged++;
             }
         }
         tagWeightsForTask(task) {
