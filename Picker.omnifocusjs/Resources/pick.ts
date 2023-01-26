@@ -21,7 +21,10 @@
     tagWeights: { [key: string]: number };
     tasks: Task[];
 
-    constructor(tagWeights: { [key: string]: number }) {
+    wantFlagged: number;
+    currentlyFlagged: number;
+
+    constructor(wantFlagged: number, tagWeights: { [key: string]: number }) {
       this.tagWeights = tagWeights;
 
       this.tasks = flattenedProjects
@@ -35,9 +38,16 @@
               t.taskStatus == Task.Status.Overdue
           )
         );
+
+      this.wantFlagged = wantFlagged;
+      this.currentlyFlagged = this.tasks.filter(t => t.flagged).length;
     }
 
-    enact() {
+    enact(): void {
+      if (this.currentlyFlagged > this.wantFlagged) {
+        return
+      }
+
       let now = new Date();
 
       let weightedTasks: [Task, number][] = [];
@@ -61,6 +71,20 @@
         weight += this.tagWeightsForTask(task)
 
         weightedTasks.push([task, weight])
+      }
+
+      if (weightedTasks.length === 0) {
+        new Alert("Problem choosing tasks", "Weighted tasks array was empty!").show();
+        return
+      }
+
+      while (this.currentlyFlagged < this.wantFlagged) {
+        let next = null;
+        while (!next || !next.flagged) {
+          next = weightedRandom(weightedTasks)
+        }
+
+        next.flagged = true
       }
     }
 
@@ -119,7 +143,7 @@
         };
       }
 
-      new FlagTasks(weights).enact();
+      new FlagTasks(5, weights).enact();
     } catch (err) {
       console.error(err);
       throw err;
