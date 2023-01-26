@@ -125,7 +125,7 @@
 
   var action = new PlugIn.Action(async () => {
     try {
-      let weights = {};
+      let weights: Record<string, number> = {};
       if (getDuringWorkHours()) {
         weights = {
           work: 4,
