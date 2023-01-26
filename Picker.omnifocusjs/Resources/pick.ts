@@ -89,7 +89,7 @@
 
       while (this.currentlyFlagged < this.wantFlagged) {
         let next = null;
-        while (!next || !next.flagged) {
+        while (!next || next.flagged) {
           next = weightedRandom(weightedTasks);
         }
 
