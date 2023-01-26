@@ -13,6 +13,7 @@
         devShell =
           pkgs.mkShell {
             packages = [
+              pkgs.nodePackages.npm
               pkgs.nodePackages.prettier
               pkgs.nodePackages.typescript
               pkgs.nodePackages.typescript-language-server
