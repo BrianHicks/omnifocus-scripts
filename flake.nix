@@ -8,6 +8,8 @@
     inputs.flake-utils.lib.eachDefaultSystem (system:
       let pkgs = import inputs.nixpkgs { inherit system; };
       in {
+        formatter = pkgs.nixpkgs-fmt;
+
         devShell =
           pkgs.mkShell { packages = [ pkgs.nodePackages.typescript pkgs.nodePackages.typescript-language-server pkgs.nodePackages.prettier ]; };
       });
