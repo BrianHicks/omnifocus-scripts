@@ -37,10 +37,6 @@
         );
     }
 
-    weight(): number {
-      return this.tasks.length;
-    }
-
     enact() {
       let now = new Date();
 
@@ -148,23 +144,7 @@
         };
       }
 
-      let strategies = [
-        new ChooseATask(weights),
-      ];
-
-      let weightedStrategies: [ChooseATask, number][] = [];
-      strategies.forEach((s) => {
-        let weight = s.weight();
-
-        if (weight) {
-          weightedStrategies.push([s, weight]);
-        }
-      });
-
-      let chosen = weightedRandom(weightedStrategies);
-      if (chosen) {
-        chosen.enact();
-      }
+      new ChooseATask(weights).enact();
     } catch (err) {
       console.error(err);
       throw err;
