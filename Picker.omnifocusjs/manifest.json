@@ -1,0 +1,13 @@
+{
+  "author": "Brian Hicks",
+  "identifier": "zone.bytes.picker",
+  "defaultLocale": "en",
+  "version": "1.0",
+  "description": "Task Picker",
+  "actions": [
+    {
+      "identifier": "pick",
+      "image": "arrow-clockwise.png"
+    }
+  ]
+}
