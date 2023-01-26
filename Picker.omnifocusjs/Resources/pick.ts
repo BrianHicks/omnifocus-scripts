@@ -40,12 +40,12 @@
         );
 
       this.wantFlagged = wantFlagged;
-      this.currentlyFlagged = this.tasks.filter(t => t.flagged).length;
+      this.currentlyFlagged = this.tasks.filter((t) => t.flagged).length;
     }
 
     enact(): void {
       if (this.currentlyFlagged > this.wantFlagged) {
-        return
+        return;
       }
 
       let now = new Date();
@@ -58,34 +58,43 @@
         // tasks that are closer to their due date should be weighted higher, up
         // to three weeks out
         if (task.effectiveDueDate) {
-          weight += Math.max(0, 21 - this.daysBetween(now, task.effectiveDueDate));
+          weight += Math.max(
+            0,
+            21 - this.daysBetween(now, task.effectiveDueDate)
+          );
         }
 
         // tasks that have been deferred should grow in urgency from their
         // deferral date. This includes repeating tasks! Otherwise, they should
         // grow in urgency according to when they were created. If both dates
         // are somehow null, it's OK to not add any weight to the task.
-        weight += Math.max(14, this.daysBetween(now, task.effectiveDeferDate || task.added || now))
+        weight += Math.max(
+          14,
+          this.daysBetween(now, task.effectiveDeferDate || task.added || now)
+        );
 
         // add weights from tags
-        weight += this.tagWeightsForTask(task)
+        weight += this.tagWeightsForTask(task);
 
-        weightedTasks.push([task, weight])
+        weightedTasks.push([task, weight]);
       }
 
       if (weightedTasks.length === 0) {
-        new Alert("Problem choosing tasks", "Weighted tasks array was empty!").show();
-        return
+        new Alert(
+          "Problem choosing tasks",
+          "Weighted tasks array was empty!"
+        ).show();
+        return;
       }
 
       while (this.currentlyFlagged < this.wantFlagged) {
         let next = null;
         while (!next || !next.flagged) {
-          next = weightedRandom(weightedTasks)
+          next = weightedRandom(weightedTasks);
         }
 
-        next.flagged = true
-        this.currentlyFlagged++
+        next.flagged = true;
+        this.currentlyFlagged++;
       }
     }
 

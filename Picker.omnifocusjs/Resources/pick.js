@@ -24,7 +24,7 @@
                 t.taskStatus == Task.Status.Next ||
                 t.taskStatus == Task.Status.Overdue));
             this.wantFlagged = wantFlagged;
-            this.currentlyFlagged = this.tasks.filter(t => t.flagged).length;
+            this.currentlyFlagged = this.tasks.filter((t) => t.flagged).length;
         }
         enact() {
             if (this.currentlyFlagged > this.wantFlagged) {
