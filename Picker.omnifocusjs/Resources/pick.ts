@@ -18,8 +18,6 @@
   }
 
   class ChooseATask {
-    readonly name = "Choose a Task";
-
     tagWeights: { [key: string]: number };
     tasks: Task[];
 
@@ -160,18 +158,11 @@
 
         if (weight) {
           weightedStrategies.push([s, weight]);
-        } else {
-          console.log(`skipping ${s.name}`);
         }
       });
 
-      for (let pair of weightedStrategies) {
-        console.log(`weights: ${pair[0].name} was ${pair[1]}`);
-      }
-
       let chosen = weightedRandom(weightedStrategies);
       if (chosen) {
-        console.log(`chose ${chosen.name}`);
         chosen.enact();
       }
     } catch (err) {
