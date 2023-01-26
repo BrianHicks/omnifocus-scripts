@@ -125,9 +125,8 @@
 
   var action = new PlugIn.Action(async () => {
     try {
-      let duringWorkHours = getDuringWorkHours();
       let weights = {};
-      if (duringWorkHours) {
+      if (getDuringWorkHours()) {
         weights = {
           work: 4,
           Kraken: 2,
