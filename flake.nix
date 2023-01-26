@@ -11,6 +11,12 @@
         formatter = pkgs.nixpkgs-fmt;
 
         devShell =
-          pkgs.mkShell { packages = [ pkgs.nodePackages.typescript pkgs.nodePackages.typescript-language-server pkgs.nodePackages.prettier ]; };
+          pkgs.mkShell {
+            packages = [
+              pkgs.nodePackages.prettier
+              pkgs.nodePackages.typescript
+              pkgs.nodePackages.typescript-language-server
+            ];
+          };
       });
 }
