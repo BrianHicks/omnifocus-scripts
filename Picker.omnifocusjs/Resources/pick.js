@@ -27,7 +27,8 @@
             this.currentlyFlagged = this.tasks.filter((t) => t.flagged).length;
         }
         enact() {
-            if (this.currentlyFlagged > this.wantFlagged) {
+            if (this.currentlyFlagged >= this.wantFlagged) {
+                console.log(`we have ${this.currentlyFlagged} tasks, and want ${this.wantFlagged}, so we're just done.`);
                 return;
             }
             let now = new Date();
