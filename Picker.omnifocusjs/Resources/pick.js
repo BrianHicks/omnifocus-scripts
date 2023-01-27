@@ -53,13 +53,14 @@
                 new Alert("Problem choosing tasks", "Weighted tasks array was empty!").show();
                 return;
             }
-            while (this.currentlyFlagged < this.wantFlagged) {
+            while (this.currentlyFlagged < this.wantFlagged && weightedTasks.length >= 1) {
                 let next = null;
                 while (!next || next.flagged) {
                     next = weightedRandom(weightedTasks);
                 }
                 next.flagged = true;
                 this.currentlyFlagged++;
+                weightedTasks = weightedTasks.filter(([task, _]) => task.id !== next?.id);
             }
         }
         tagWeightsForTask(task) {

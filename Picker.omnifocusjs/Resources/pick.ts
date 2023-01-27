@@ -88,14 +88,15 @@
         return;
       }
 
-      while (this.currentlyFlagged < this.wantFlagged) {
-        let next = null;
+      while (this.currentlyFlagged < this.wantFlagged && weightedTasks.length >= 1) {
+        let next: Task | null = null;
         while (!next || next.flagged) {
           next = weightedRandom(weightedTasks);
         }
 
         next.flagged = true;
         this.currentlyFlagged++;
+        weightedTasks = weightedTasks.filter(([task, _]) => task.id !== next?.id);
       }
     }
 
