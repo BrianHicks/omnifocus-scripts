@@ -144,6 +144,7 @@
           "Wandering Toolmaker": 2,
           "from Linear": 8,
           "from GitHub": 8,
+          habit: 10,
         };
       } else {
         weights = {
