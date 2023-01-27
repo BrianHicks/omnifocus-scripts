@@ -45,7 +45,9 @@
 
     enact(): void {
       if (this.currentlyFlagged >= this.wantFlagged) {
-        console.log(`we have ${this.currentlyFlagged} tasks, and want ${this.wantFlagged}, so we're just done.`);
+        console.log(
+          `we have ${this.currentlyFlagged} tasks, and want ${this.wantFlagged}, so we're just done.`
+        );
         return;
       }
 
@@ -88,7 +90,10 @@
         return;
       }
 
-      while (this.currentlyFlagged < this.wantFlagged && weightedTasks.length >= 1) {
+      while (
+        this.currentlyFlagged < this.wantFlagged &&
+        weightedTasks.length >= 1
+      ) {
         let next: Task | null = null;
         while (!next || next.flagged) {
           next = weightedRandom(weightedTasks);
@@ -96,7 +101,9 @@
 
         next.flagged = true;
         this.currentlyFlagged++;
-        weightedTasks = weightedTasks.filter(([task, _]) => task.id !== next?.id);
+        weightedTasks = weightedTasks.filter(
+          ([task, _]) => task.id !== next?.id
+        );
       }
     }
 

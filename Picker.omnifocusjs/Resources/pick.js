@@ -53,7 +53,8 @@
                 new Alert("Problem choosing tasks", "Weighted tasks array was empty!").show();
                 return;
             }
-            while (this.currentlyFlagged < this.wantFlagged && weightedTasks.length >= 1) {
+            while (this.currentlyFlagged < this.wantFlagged &&
+                weightedTasks.length >= 1) {
                 let next = null;
                 while (!next || next.flagged) {
                     next = weightedRandom(weightedTasks);
