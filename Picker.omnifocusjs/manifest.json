@@ -8,6 +8,10 @@
     {
       "identifier": "pick",
       "image": "arrow-clockwise.png"
+    },
+    {
+      "identifier": "showFlagged",
+      "image": "index-cards.png",
     }
   ]
 }
