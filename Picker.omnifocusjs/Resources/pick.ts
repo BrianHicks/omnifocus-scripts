@@ -56,7 +56,11 @@
       let weightedTasks: [Task, number][] = [];
 
       for (let task of this.tasks) {
-        let weight = 0;
+        // start with weights from tags
+        let weight = this.tagWeightsForTask(task);
+        if (!weight) {
+          continue;
+        }
 
         // tasks that are closer to their due date should be weighted higher, up
         // to three weeks out
@@ -75,9 +79,6 @@
           14,
           this.daysBetween(now, task.effectiveDeferDate || task.added || now)
         );
-
-        // add weights from tags
-        weight += this.tagWeightsForTask(task);
 
         weightedTasks.push([task, weight]);
       }
@@ -107,8 +108,10 @@
       }
     }
 
-    tagWeightsForTask(task: Task): number {
-      var weight = 0;
+    tagWeightsForTask(task: Task): null | number {
+      // we return a null weight if no tags match, because we don't want to
+      // choose tasks that don't match any tags.
+      var weight = null;
 
       var todo = task.tags;
       var seen: Tag[] = [];
@@ -118,7 +121,10 @@
           continue;
         }
 
-        weight += this.tagWeights[tag.name] || 0;
+        if (this.tagWeights[tag.name]) {
+          weight = (weight || 0) + this.tagWeights[tag.name];
+        }
+
         if (tag.parent) {
           todo.push(tag.parent);
         }
@@ -153,13 +159,15 @@
           "from Linear": 8,
           "from GitHub": 8,
           habit: 10,
+          personal: 1,
         };
       } else {
         weights = {
+          Anne: 10,
           personal: 4,
           hobbies: 2,
           house: 2,
-          reading: 6,
+          learning: 6,
         };
       }
 
