@@ -140,7 +140,7 @@
     }
   }
 
-  function getDuringWorkHours(): boolean {
+  function isDuringWorkHours(): boolean {
     const now = new Date();
     const hour = now.getHours();
     const day = now.getDay();
@@ -151,7 +151,7 @@
   var action = new PlugIn.Action(async () => {
     try {
       let weights: Record<string, number> = {};
-      if (getDuringWorkHours()) {
+      if (isDuringWorkHours()) {
         weights = {
           work: 4,
           Kraken: 2,

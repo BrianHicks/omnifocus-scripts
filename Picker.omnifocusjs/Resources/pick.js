@@ -92,7 +92,7 @@
             return millis / 1000 / 60 / 60 / 24;
         }
     }
-    function getDuringWorkHours() {
+    function isDuringWorkHours() {
         const now = new Date();
         const hour = now.getHours();
         const day = now.getDay();
@@ -101,7 +101,7 @@
     var action = new PlugIn.Action(async () => {
         try {
             let weights = {};
-            if (getDuringWorkHours()) {
+            if (isDuringWorkHours()) {
                 weights = {
                     work: 4,
                     Kraken: 2,
