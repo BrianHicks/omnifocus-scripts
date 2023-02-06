@@ -59,6 +59,7 @@
         // start with weights from tags
         let weight = this.tagWeightsForTask(task);
         if (!weight) {
+          console.log(`skipping ${task.name} because no tags matched.`);
           continue;
         }
 
