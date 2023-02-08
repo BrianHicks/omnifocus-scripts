@@ -116,6 +116,7 @@
                     "from Linear": 8,
                     "from GitHub": 8,
                     habit: 10,
+                    learning: 2,
                     personal: 1,
                 };
             }
