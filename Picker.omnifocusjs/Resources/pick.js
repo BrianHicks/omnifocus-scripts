@@ -127,6 +127,7 @@
                     hobbies: 2,
                     house: 2,
                     learning: 6,
+                    habit: 1,
                 };
             }
             new FlagTasks(5, weights).enact();

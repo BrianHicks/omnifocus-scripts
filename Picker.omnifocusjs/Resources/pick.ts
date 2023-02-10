@@ -178,6 +178,7 @@
           hobbies: 2,
           house: 2,
           learning: 6,
+          habit: 1,
         };
       }
 
