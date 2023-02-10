@@ -92,13 +92,21 @@
         return;
       }
 
+      weightedTasks.sort(
+        ([_taskA, weightA], [_taskB, weightB]) => weightB - weightA
+      );
+
       while (
         this.currentlyFlagged < this.wantFlagged &&
         weightedTasks.length >= 1
       ) {
         let next: Task | null = null;
         while (!next || next.flagged) {
-          next = weightedRandom(weightedTasks);
+          if (app.optionKeyDown) {
+            next = weightedTasks[0][0];
+          } else {
+            next = weightedRandom(weightedTasks);
+          }
         }
 
         next.flagged = true;
