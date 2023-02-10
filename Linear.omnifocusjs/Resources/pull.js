@@ -4,7 +4,7 @@
     var action = new PlugIn.Action(async () => {
         try {
             let req = URL.FetchRequest.fromString("https://api.linear.app/graphql");
-            if (req === null || req.url === null || req.url.host === null) {
+            if (!req?.url?.host) {
                 throw "could not parse the URL for Linear's API";
             }
             /////////////////////////////////////
