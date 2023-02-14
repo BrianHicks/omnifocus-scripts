@@ -62,7 +62,7 @@
                 let next = null;
                 while (!next || next.flagged) {
                     if (app.optionKeyDown) {
-                        let nexts = weightedTasks.pop();
+                        let nexts = weightedTasks.shift();
                         if (!nexts) {
                             return;
                         }

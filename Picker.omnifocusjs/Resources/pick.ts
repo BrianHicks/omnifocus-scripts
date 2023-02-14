@@ -103,10 +103,8 @@
         let next: Task | null = null;
         while (!next || next.flagged) {
           if (app.optionKeyDown) {
-            let nexts = weightedTasks.pop();
-            if (!nexts) {
-              return;
-            }
+            let nexts = weightedTasks.shift();
+            if (!nexts) { return }
             next = nexts[0];
           } else {
             next = weightedRandom(weightedTasks);
