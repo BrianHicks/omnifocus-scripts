@@ -103,14 +103,16 @@
         let next: Task | null = null;
         while (!next || next.flagged) {
           if (app.optionKeyDown) {
-            let nexts = weightedTasks.shift();
-            if (!nexts) { return }
-            next = nexts[0];
-          } else {
             next = weightedRandom(weightedTasks);
             weightedTasks = weightedTasks.filter(
               ([task, _]) => task.id !== next?.id
             );
+          } else {
+            let nexts = weightedTasks.shift();
+            if (!nexts) {
+              return;
+            }
+            next = nexts[0];
           }
         }
 
