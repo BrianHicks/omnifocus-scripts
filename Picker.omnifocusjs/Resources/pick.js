@@ -62,15 +62,19 @@
                 let next = null;
                 while (!next || next.flagged) {
                     if (app.optionKeyDown) {
-                        next = weightedTasks[0][0];
+                        let nexts = weightedTasks.pop();
+                        if (!nexts) {
+                            return;
+                        }
+                        next = nexts[0];
                     }
                     else {
                         next = weightedRandom(weightedTasks);
+                        weightedTasks = weightedTasks.filter(([task, _]) => task.id !== next?.id);
                     }
                 }
                 next.flagged = true;
                 this.currentlyFlagged++;
-                weightedTasks = weightedTasks.filter(([task, _]) => task.id !== next?.id);
             }
         }
         tagWeightsForTask(task) {
