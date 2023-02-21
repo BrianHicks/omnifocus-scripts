@@ -164,7 +164,13 @@
   var action = new PlugIn.Action(async () => {
     try {
       let weights: Record<string, number> = {};
-      if (isDuringWorkHours()) {
+
+      let chooseWorkTasks = isDuringWorkHours();
+      if (app.shiftKeyDown) {
+        chooseWorkTasks = !chooseWorkTasks
+      }
+
+      if (chooseWorkTasks) {
         weights = {
           work: 4,
           Kraken: 2,
