@@ -106,6 +106,12 @@
         ([_taskA, weightA], [_taskB, weightB]) => weightB - weightA
       );
 
+      if (app.optionKeyDown) {
+        for (let [task, weight] of weightedTasks) {
+          console.log(`${task.name}: ${weight}`)
+        }
+      }
+
       while (
         this.currentlyFlagged < this.wantFlagged &&
         weightedTasks.length >= 1
