@@ -217,6 +217,7 @@
           habit: 10,
           learning: 2,
           personal: 1,
+          notes: 1,
         };
       } else {
         method = "random";
