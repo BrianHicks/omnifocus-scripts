@@ -15,7 +15,7 @@
         return null;
     }
     class FlagTasks {
-        constructor(wantFlagged, tagWeights) {
+        constructor(wantFlagged, tagWeights, method) {
             this.tagWeights = tagWeights;
             this.tasks = flattenedProjects
                 .filter((p) => p.status == Project.Status.Active)
@@ -23,6 +23,7 @@
                 t.taskStatus == Task.Status.DueSoon ||
                 t.taskStatus == Task.Status.Next ||
                 t.taskStatus == Task.Status.Overdue));
+            this.method = method;
             this.wantFlagged = wantFlagged;
             this.currentlyFlagged = this.tasks.filter((t) => t.flagged).length;
         }
@@ -61,16 +62,20 @@
                 weightedTasks.length >= 1) {
                 let next = null;
                 while (!next || next.flagged) {
-                    if (app.optionKeyDown) {
-                        next = weightedRandom(weightedTasks);
-                        weightedTasks = weightedTasks.filter(([task, _]) => task.id !== next?.id);
-                    }
-                    else {
-                        let nexts = weightedTasks.shift();
-                        if (!nexts) {
-                            return;
-                        }
-                        next = nexts[0];
+                    switch (this.method) {
+                        case "random":
+                            next = weightedRandom(weightedTasks);
+                            weightedTasks = weightedTasks.filter(([task, _]) => task.id !== next?.id);
+                            break;
+                        case "top":
+                            let nexts = weightedTasks.shift();
+                            if (!nexts) {
+                                return;
+                            }
+                            next = nexts[0];
+                            break;
+                        default:
+                            throw "unreachable";
                     }
                 }
                 next.flagged = true;
@@ -103,20 +108,34 @@
             return millis / 1000 / 60 / 60 / 24;
         }
     }
-    function isDuringWorkHours() {
-        const now = new Date();
-        const hour = now.getHours();
-        const day = now.getDay();
-        return hour >= 8 && hour <= 17 && day != 0 && day != 6;
+    function isWorkday(now) {
+        now = now || new Date();
+        let day = now.getDay();
+        return day != 0 && day != 6;
+    }
+    function isMorning(now) {
+        now = now || new Date();
+        let hour = now.getHours();
+        return hour >= 8 && hour <= 12;
+    }
+    function isAfternoon(now) {
+        now = now || new Date();
+        let hour = now.getHours();
+        let minute = now.getMinutes();
+        return hour >= 13 && (hour == 17 ? minute <= 30 : hour < 17);
+    }
+    function isWorkHours(now) {
+        now = now || new Date();
+        return isMorning(now) || isAfternoon(now);
     }
     var action = new PlugIn.Action(async () => {
         try {
+            let count = 5;
             let weights = {};
-            let chooseWorkTasks = isDuringWorkHours();
-            if (app.shiftKeyDown) {
-                chooseWorkTasks = !chooseWorkTasks;
-            }
-            if (chooseWorkTasks) {
+            let method = "top";
+            let now = new Date();
+            if (isWorkday(now) && isWorkHours(now) && !app.shiftKeyDown) {
+                method = isMorning(now) ? "top" : "random";
                 weights = {
                     work: 4,
                     Kraken: 2,
@@ -129,6 +148,7 @@
                 };
             }
             else {
+                method = "random";
                 weights = {
                     Anne: 10,
                     personal: 4,
@@ -138,7 +158,7 @@
                     habit: 1,
                 };
             }
-            new FlagTasks(5, weights).enact();
+            new FlagTasks(count, weights, method).enact();
         }
         catch (err) {
             console.error(err);
