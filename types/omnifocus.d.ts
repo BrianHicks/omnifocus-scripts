@@ -28,7 +28,7 @@ declare class Application {
   readonly controlKeyDown: boolean;
   readonly name: string;
   readonly optionKeyDown: boolean;
-  readonly platformName: string;
+  readonly platformName: "iOS" | "macOS";
   readonly shiftKeyDown: boolean;
   readonly userVersion: Version;
   readonly version: string;
