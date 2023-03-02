@@ -139,7 +139,11 @@
             let weights = {};
             let method = "top";
             let now = new Date();
-            if (isWorkday(now) && isWorkHours(now) && !app.shiftKeyDown) {
+            let isWork = isWorkday(now) && isWorkHours(now);
+            if (app.shiftKeyDown) {
+                isWork = !isWork;
+            }
+            if (isWork) {
                 method = isMorning(now) ? "top" : "random";
                 weights = {
                     work: 4,
