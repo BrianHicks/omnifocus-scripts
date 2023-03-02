@@ -50,7 +50,7 @@
                 // deferral date. This includes repeating tasks! Otherwise, they should
                 // grow in urgency according to when they were created. If both dates
                 // are somehow null, it's OK to not add any weight to the task.
-                weight += Math.max(14, this.daysBetween(now, task.effectiveDeferDate || task.added || now));
+                weight += Math.max(14, this.daysBetween(now, task.deferDate || task.added || now));
                 weightedTasks.push([task, weight]);
             }
             if (weightedTasks.length === 0) {

@@ -88,7 +88,7 @@
         // are somehow null, it's OK to not add any weight to the task.
         weight += Math.max(
           14,
-          this.daysBetween(now, task.effectiveDeferDate || task.added || now)
+          this.daysBetween(now, task.deferDate || task.added || now)
         );
 
         weightedTasks.push([task, weight]);
