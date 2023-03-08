@@ -227,6 +227,14 @@
 
       if (isWork) {
         method = isLateAfternoon(now) ? "random" : "top";
+        if (app.optionKeyDown) {
+          if (method == "random") {
+            method = "top"
+          } else {
+            method = "random"
+          }
+        }
+
         weights = {
           work: 4,
           Kraken: 2,
