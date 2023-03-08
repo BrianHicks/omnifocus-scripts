@@ -187,21 +187,29 @@
     now = now || new Date();
     let hour = now.getHours();
 
-    return hour >= 8 && hour <= 12;
+    return hour >= 8 && hour < 12;
   }
 
-  function isAfternoon(now?: Date): boolean {
+  function isEarlyAfternoon(now?: Date): boolean {
     now = now || new Date();
     let hour = now.getHours();
     let minute = now.getMinutes();
 
-    return hour >= 13 && (hour == 17 ? minute <= 30 : hour < 17);
+    return hour >= 12 && hour < 15;
+  }
+
+  function isLateAfternoon(now?: Date): boolean {
+    now = now || new Date();
+    let hour = now.getHours();
+    let minute = now.getMinutes();
+
+    return hour >= 15 && (hour == 17 ? minute <= 30 : hour < 17);
   }
 
   function isWorkHours(now?: Date): boolean {
     now = now || new Date();
 
-    return isMorning(now) || isAfternoon(now);
+    return isMorning(now) || isEarlyAfternoon(now) || isLateAfternoon(now);
   }
 
   var action = new PlugIn.Action(async () => {
@@ -218,7 +226,7 @@
       }
 
       if (isWork) {
-        method = isMorning(now) ? "top" : "random";
+        method = isLateAfternoon(now) ? "random" : "top";
         weights = {
           work: 4,
           Kraken: 2,
