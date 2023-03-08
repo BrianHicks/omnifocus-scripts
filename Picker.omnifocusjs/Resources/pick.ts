@@ -40,10 +40,11 @@
         .flatMap((p) =>
           p.flattenedTasks.filter(
             (t: Task) =>
-              t.taskStatus == Task.Status.Available ||
-              t.taskStatus == Task.Status.DueSoon ||
-              t.taskStatus == Task.Status.Next ||
-              t.taskStatus == Task.Status.Overdue
+              t.children.length == 0 &&
+              (t.taskStatus == Task.Status.Available ||
+                t.taskStatus == Task.Status.DueSoon ||
+                t.taskStatus == Task.Status.Next ||
+                t.taskStatus == Task.Status.Overdue)
           )
         );
 

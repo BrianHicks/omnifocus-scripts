@@ -19,10 +19,11 @@
             this.tagWeights = tagWeights;
             this.tasks = flattenedProjects
                 .filter((p) => p.status == Project.Status.Active)
-                .flatMap((p) => p.flattenedTasks.filter((t) => t.taskStatus == Task.Status.Available ||
-                t.taskStatus == Task.Status.DueSoon ||
-                t.taskStatus == Task.Status.Next ||
-                t.taskStatus == Task.Status.Overdue));
+                .flatMap((p) => p.flattenedTasks.filter((t) => t.children.length == 0 &&
+                (t.taskStatus == Task.Status.Available ||
+                    t.taskStatus == Task.Status.DueSoon ||
+                    t.taskStatus == Task.Status.Next ||
+                    t.taskStatus == Task.Status.Overdue)));
             this.method = method;
             this.wantFlagged = wantFlagged;
             this.currentlyFlagged = this.tasks.filter((t) => t.flagged).length;
