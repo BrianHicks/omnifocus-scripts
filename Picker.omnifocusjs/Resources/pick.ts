@@ -108,7 +108,7 @@
 
       if (app.optionKeyDown) {
         for (let [task, weight] of weightedTasks) {
-          console.log(`${task.name}: ${weight}`)
+          console.log(`${task.name}: ${weight}`);
         }
       }
 
@@ -222,16 +222,16 @@
 
       let isWork = isWorkday(now) && isWorkHours(now);
       if (app.shiftKeyDown) {
-        isWork = !isWork
+        isWork = !isWork;
       }
 
       if (isWork) {
         method = isLateAfternoon(now) ? "random" : "top";
         if (app.optionKeyDown) {
           if (method == "random") {
-            method = "top"
+            method = "top";
           } else {
-            method = "random"
+            method = "random";
           }
         }
 
