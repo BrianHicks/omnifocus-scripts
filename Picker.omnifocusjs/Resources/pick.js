@@ -215,6 +215,7 @@
                     house: 2,
                     learning: 4,
                     habit: 1,
+                    nonwork: 4,
                 };
             }
             new FlagTasks(count, weights, method).enact();

@@ -306,6 +306,7 @@
           house: 2,
           learning: 4,
           habit: 1,
+          nonwork: 4,
         };
       }
 
