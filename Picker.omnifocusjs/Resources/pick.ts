@@ -288,11 +288,11 @@
 
         weights = {
           work: 4,
-          Kraken: 2,
+          Adminotaurs: 2,
           "Wandering Toolmaker": 2,
           "from Linear": 8,
           "from GitHub": 8,
-          habit: 10,
+          habit: 8,
           learning: 2,
           personal: 1,
           notes: 1,
@@ -300,11 +300,11 @@
       } else {
         method = "random";
         weights = {
-          Anne: 10,
+          Anne: 8,
           personal: 4,
           hobbies: 2,
           house: 2,
-          learning: 6,
+          learning: 4,
           habit: 1,
         };
       }
