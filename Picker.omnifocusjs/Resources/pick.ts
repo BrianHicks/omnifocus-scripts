@@ -1,26 +1,143 @@
 (() => {
-  function weightedRandom<Type>(pairs: [Type, number][]): Type | null {
+  interface Numberlike {
+    toNumber(): number;
+  }
+
+  function weightedRandom<T extends Numberlike>(values: T[]): T | null {
     var total = 0;
-    for (let pair of pairs) {
-      total += pair[1];
+    for (let value of values) {
+      total += value.toNumber();
     }
 
     let target = Math.random() * total;
-    for (let pair of pairs) {
-      target -= pair[1];
+    for (let value of values) {
+      target -= value.toNumber();
 
       if (target <= 0) {
-        return pair[0];
+        return value;
       }
     }
 
     return null;
   }
 
+  class TaskScore {
+    task: Task;
+    fromTags: number | null;
+    daysUntilDue: number | null;
+    daysOld: number;
+
+    constructor(
+      task: Task,
+      fromTags: number | null,
+      daysUntilDue: number | null,
+      daysOld: number
+    ) {
+      this.task = task;
+      this.fromTags = fromTags;
+      this.daysUntilDue = daysUntilDue;
+      this.daysOld = daysOld;
+    }
+
+    toString(): string {
+      return `${
+        this.task.name
+      }: ${this.toNumber()} with ${this.tagScore()} from tags, ${this.dueScore()} from due date, and ${this.ageScore()} from age`;
+    }
+
+    tagScore(): number {
+      return this.fromTags || 0;
+    }
+
+    dueScore(): number {
+      if (!this.daysUntilDue) {
+        return 0;
+      }
+
+      return Math.max(0, 21 - this.daysUntilDue);
+    }
+
+    ageScore(): number {
+      return this.daysOld;
+    }
+
+    toNumber(): number {
+      return this.tagScore() + this.dueScore() + this.ageScore();
+    }
+  }
+
+  class TaskScorer {
+    tagWeights: { [key: string]: number };
+
+    constructor(tagWeights: { [key: string]: number }) {
+      this.tagWeights = tagWeights;
+    }
+
+    score(task: Task): TaskScore | null {
+      // start with weights from tags
+      const fromTags = this.scoreFromTags(task);
+      if (!fromTags) {
+        console.log(`skipping ${task.name} because no tags matched.`);
+        return null;
+      }
+
+      const now = new Date();
+
+      // tasks that are closer to their due date should be weighted higher, up
+      // to three weeks out
+      let daysUntilDue = null;
+      if (task.effectiveDueDate) {
+        daysUntilDue = this.daysBetween(now, task.effectiveDueDate);
+      }
+
+      // tasks that have been deferred should grow in urgency from their
+      // deferral date. This includes repeating tasks! Otherwise, they should
+      // grow in urgency according to when they were created. If both dates
+      // are somehow null, it's OK to not add any weight to the task.
+      const daysOld = this.daysBetween(
+        now,
+        task.deferDate || task.added || now
+      );
+
+      return new TaskScore(task, fromTags, daysUntilDue, daysOld);
+    }
+
+    scoreFromTags(task: Task): null | number {
+      // we return a null weight if no tags match, because we don't want to
+      // choose tasks that don't match any tags.
+      var weight = null;
+
+      var todo = task.tags;
+      var seen: Tag[] = [];
+      while (todo.length !== 0) {
+        let tag = todo.pop();
+        if (seen.indexOf(tag) !== -1) {
+          continue;
+        }
+
+        if (this.tagWeights[tag.name]) {
+          weight = (weight || 0) + this.tagWeights[tag.name];
+        }
+
+        if (tag.parent) {
+          todo.push(tag.parent);
+        }
+        seen.push(tag);
+      }
+
+      return weight;
+    }
+
+    daysBetween(a: Date, b: Date): number {
+      let millis = Math.abs(a.getTime() - b.getTime());
+      return Math.ceil(millis / 1000 / 60 / 60 / 24);
+    }
+  }
+
   type Method = "random" | "top";
 
   class FlagTasks {
-    tagWeights: { [key: string]: number };
+    scorer: TaskScorer;
     tasks: Task[];
 
     method: Method;
@@ -33,7 +150,7 @@
       tagWeights: { [key: string]: number },
       method: Method
     ) {
-      this.tagWeights = tagWeights;
+      this.scorer = new TaskScorer(tagWeights);
 
       this.tasks = flattenedProjects
         .filter((p) => p.status == Project.Status.Active)
@@ -62,40 +179,17 @@
         return;
       }
 
-      let now = new Date();
-
-      let weightedTasks: [Task, number][] = [];
-
-      for (let task of this.tasks) {
-        // start with weights from tags
-        let weight = this.tagWeightsForTask(task);
-        if (!weight) {
-          console.log(`skipping ${task.name} because no tags matched.`);
-          continue;
+      let scored: TaskScore[] = [];
+      this.tasks.forEach((task) => {
+        let maybeScore = this.scorer.score(task);
+        if (maybeScore) {
+          scored.push(maybeScore);
         }
+      });
 
-        // tasks that are closer to their due date should be weighted higher, up
-        // to three weeks out
-        if (task.effectiveDueDate) {
-          weight += Math.max(
-            0,
-            21 - this.daysBetween(now, task.effectiveDueDate)
-          );
-        }
+      scored.sort((a, b) => b.toNumber() - a.toNumber());
 
-        // tasks that have been deferred should grow in urgency from their
-        // deferral date. This includes repeating tasks! Otherwise, they should
-        // grow in urgency according to when they were created. If both dates
-        // are somehow null, it's OK to not add any weight to the task.
-        weight += Math.max(
-          14,
-          this.daysBetween(now, task.deferDate || task.added || now)
-        );
-
-        weightedTasks.push([task, weight]);
-      }
-
-      if (weightedTasks.length === 0) {
+      if (scored.length === 0) {
         new Alert(
           "Problem choosing tasks",
           "Weighted tasks array was empty!"
@@ -103,36 +197,22 @@
         return;
       }
 
-      weightedTasks.sort(
-        ([_taskA, weightA], [_taskB, weightB]) => weightB - weightA
-      );
-
-      if (app.optionKeyDown) {
-        for (let [task, weight] of weightedTasks) {
-          console.log(`${task.name}: ${weight}`);
-        }
-      }
-
-      while (
-        this.currentlyFlagged < this.wantFlagged &&
-        weightedTasks.length >= 1
-      ) {
-        let next: Task | null = null;
-        while (!next || next.flagged) {
+      while (this.currentlyFlagged < this.wantFlagged && scored.length >= 1) {
+        let next: TaskScore | null = null;
+        while (!next || next.task.flagged) {
           switch (this.method) {
             case "random":
-              next = weightedRandom(weightedTasks);
-              weightedTasks = weightedTasks.filter(
-                ([task, _]) => task.id !== next?.id
-              );
+              next = weightedRandom(scored);
+              scored = scored.filter((score) => score === next);
               break;
 
             case "top":
-              let nexts = weightedTasks.shift();
-              if (!nexts) {
+              let draftNext = scored.shift();
+              if (!draftNext) {
+                // we've run out of tasks to choose
                 return;
               }
-              next = nexts[0];
+              next = draftNext;
               break;
 
             default:
@@ -140,40 +220,10 @@
           }
         }
 
-        next.flagged = true;
+        console.log(`chose ${next}`);
+        next.task.flagged = true;
         this.currentlyFlagged++;
       }
-    }
-
-    tagWeightsForTask(task: Task): null | number {
-      // we return a null weight if no tags match, because we don't want to
-      // choose tasks that don't match any tags.
-      var weight = null;
-
-      var todo = task.tags;
-      var seen: Tag[] = [];
-      while (todo.length !== 0) {
-        let tag = todo.pop();
-        if (seen.indexOf(tag) !== -1) {
-          continue;
-        }
-
-        if (this.tagWeights[tag.name]) {
-          weight = (weight || 0) + this.tagWeights[tag.name];
-        }
-
-        if (tag.parent) {
-          todo.push(tag.parent);
-        }
-        seen.push(tag);
-      }
-
-      return weight;
-    }
-
-    daysBetween(a: Date, b: Date): number {
-      let millis = Math.abs(a.getTime() - b.getTime());
-      return millis / 1000 / 60 / 60 / 24;
     }
   }
 

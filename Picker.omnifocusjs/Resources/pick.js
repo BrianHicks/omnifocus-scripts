@@ -1,94 +1,71 @@
 "use strict";
 (() => {
-    function weightedRandom(pairs) {
+    function weightedRandom(values) {
         var total = 0;
-        for (let pair of pairs) {
-            total += pair[1];
+        for (let value of values) {
+            total += value.toNumber();
         }
         let target = Math.random() * total;
-        for (let pair of pairs) {
-            target -= pair[1];
+        for (let value of values) {
+            target -= value.toNumber();
             if (target <= 0) {
-                return pair[0];
+                return value;
             }
         }
         return null;
     }
-    class FlagTasks {
-        constructor(wantFlagged, tagWeights, method) {
+    class TaskScore {
+        constructor(task, fromTags, daysUntilDue, daysOld) {
+            this.task = task;
+            this.fromTags = fromTags;
+            this.daysUntilDue = daysUntilDue;
+            this.daysOld = daysOld;
+        }
+        toString() {
+            return `${this.task.name}: ${this.toNumber()} with ${this.tagScore()} from tags, ${this.dueScore()} from due date, and ${this.ageScore()} from age`;
+        }
+        tagScore() {
+            return this.fromTags || 0;
+        }
+        dueScore() {
+            if (!this.daysUntilDue) {
+                return 0;
+            }
+            return Math.max(0, 21 - this.daysUntilDue);
+        }
+        ageScore() {
+            return this.daysOld;
+        }
+        toNumber() {
+            return this.tagScore() + this.dueScore() + this.ageScore();
+        }
+    }
+    class TaskScorer {
+        constructor(tagWeights) {
             this.tagWeights = tagWeights;
-            this.tasks = flattenedProjects
-                .filter((p) => p.status == Project.Status.Active)
-                .flatMap((p) => p.flattenedTasks.filter((t) => t.children.length == 0 &&
-                (t.taskStatus == Task.Status.Available ||
-                    t.taskStatus == Task.Status.DueSoon ||
-                    t.taskStatus == Task.Status.Next ||
-                    t.taskStatus == Task.Status.Overdue)));
-            this.method = method;
-            this.wantFlagged = wantFlagged;
-            this.currentlyFlagged = this.tasks.filter((t) => t.flagged).length;
         }
-        enact() {
-            if (this.currentlyFlagged >= this.wantFlagged) {
-                console.log(`we have ${this.currentlyFlagged} tasks, and want ${this.wantFlagged}, so we're just done.`);
-                return;
+        score(task) {
+            // start with weights from tags
+            const fromTags = this.scoreFromTags(task);
+            if (!fromTags) {
+                console.log(`skipping ${task.name} because no tags matched.`);
+                return null;
             }
-            let now = new Date();
-            let weightedTasks = [];
-            for (let task of this.tasks) {
-                // start with weights from tags
-                let weight = this.tagWeightsForTask(task);
-                if (!weight) {
-                    console.log(`skipping ${task.name} because no tags matched.`);
-                    continue;
-                }
-                // tasks that are closer to their due date should be weighted higher, up
-                // to three weeks out
-                if (task.effectiveDueDate) {
-                    weight += Math.max(0, 21 - this.daysBetween(now, task.effectiveDueDate));
-                }
-                // tasks that have been deferred should grow in urgency from their
-                // deferral date. This includes repeating tasks! Otherwise, they should
-                // grow in urgency according to when they were created. If both dates
-                // are somehow null, it's OK to not add any weight to the task.
-                weight += Math.max(14, this.daysBetween(now, task.deferDate || task.added || now));
-                weightedTasks.push([task, weight]);
+            const now = new Date();
+            // tasks that are closer to their due date should be weighted higher, up
+            // to three weeks out
+            let daysUntilDue = null;
+            if (task.effectiveDueDate) {
+                daysUntilDue = this.daysBetween(now, task.effectiveDueDate);
             }
-            if (weightedTasks.length === 0) {
-                new Alert("Problem choosing tasks", "Weighted tasks array was empty!").show();
-                return;
-            }
-            weightedTasks.sort(([_taskA, weightA], [_taskB, weightB]) => weightB - weightA);
-            if (app.optionKeyDown) {
-                for (let [task, weight] of weightedTasks) {
-                    console.log(`${task.name}: ${weight}`);
-                }
-            }
-            while (this.currentlyFlagged < this.wantFlagged &&
-                weightedTasks.length >= 1) {
-                let next = null;
-                while (!next || next.flagged) {
-                    switch (this.method) {
-                        case "random":
-                            next = weightedRandom(weightedTasks);
-                            weightedTasks = weightedTasks.filter(([task, _]) => task.id !== next?.id);
-                            break;
-                        case "top":
-                            let nexts = weightedTasks.shift();
-                            if (!nexts) {
-                                return;
-                            }
-                            next = nexts[0];
-                            break;
-                        default:
-                            throw "unreachable";
-                    }
-                }
-                next.flagged = true;
-                this.currentlyFlagged++;
-            }
+            // tasks that have been deferred should grow in urgency from their
+            // deferral date. This includes repeating tasks! Otherwise, they should
+            // grow in urgency according to when they were created. If both dates
+            // are somehow null, it's OK to not add any weight to the task.
+            const daysOld = this.daysBetween(now, task.deferDate || task.added || now);
+            return new TaskScore(task, fromTags, daysUntilDue, daysOld);
         }
-        tagWeightsForTask(task) {
+        scoreFromTags(task) {
             // we return a null weight if no tags match, because we don't want to
             // choose tasks that don't match any tags.
             var weight = null;
@@ -111,7 +88,64 @@
         }
         daysBetween(a, b) {
             let millis = Math.abs(a.getTime() - b.getTime());
-            return millis / 1000 / 60 / 60 / 24;
+            return Math.ceil(millis / 1000 / 60 / 60 / 24);
+        }
+    }
+    class FlagTasks {
+        constructor(wantFlagged, tagWeights, method) {
+            this.scorer = new TaskScorer(tagWeights);
+            this.tasks = flattenedProjects
+                .filter((p) => p.status == Project.Status.Active)
+                .flatMap((p) => p.flattenedTasks.filter((t) => t.children.length == 0 &&
+                (t.taskStatus == Task.Status.Available ||
+                    t.taskStatus == Task.Status.DueSoon ||
+                    t.taskStatus == Task.Status.Next ||
+                    t.taskStatus == Task.Status.Overdue)));
+            this.method = method;
+            this.wantFlagged = wantFlagged;
+            this.currentlyFlagged = this.tasks.filter((t) => t.flagged).length;
+        }
+        enact() {
+            if (this.currentlyFlagged >= this.wantFlagged) {
+                console.log(`we have ${this.currentlyFlagged} tasks, and want ${this.wantFlagged}, so we're just done.`);
+                return;
+            }
+            let scored = [];
+            this.tasks.forEach((task) => {
+                let maybeScore = this.scorer.score(task);
+                if (maybeScore) {
+                    scored.push(maybeScore);
+                }
+            });
+            scored.sort((a, b) => b.toNumber() - a.toNumber());
+            if (scored.length === 0) {
+                new Alert("Problem choosing tasks", "Weighted tasks array was empty!").show();
+                return;
+            }
+            while (this.currentlyFlagged < this.wantFlagged && scored.length >= 1) {
+                let next = null;
+                while (!next || next.task.flagged) {
+                    switch (this.method) {
+                        case "random":
+                            next = weightedRandom(scored);
+                            scored = scored.filter((score) => score === next);
+                            break;
+                        case "top":
+                            let draftNext = scored.shift();
+                            if (!draftNext) {
+                                // we've run out of tasks to choose
+                                return;
+                            }
+                            next = draftNext;
+                            break;
+                        default:
+                            throw "unreachable";
+                    }
+                }
+                console.log(`chose ${next}`);
+                next.task.flagged = true;
+                this.currentlyFlagged++;
+            }
         }
     }
     function isWorkday(now) {
