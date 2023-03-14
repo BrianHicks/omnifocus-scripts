@@ -287,26 +287,26 @@
         }
 
         weights = {
+          "from GitHub": 8,
+          "from Linear": 8,
+          habit: 8,
           work: 4,
           Adminotaurs: 2,
-          "Wandering Toolmaker": 2,
-          "from Linear": 8,
-          "from GitHub": 8,
-          habit: 8,
           learning: 2,
-          personal: 1,
+          "Wandering Toolmaker": 2,
           notes: 1,
+          personal: 1,
         };
       } else {
         method = "random";
         weights = {
           Anne: 8,
+          learning: 4,
+          nonwork: 4,
           personal: 4,
           hobbies: 2,
-          house: 2,
-          learning: 4,
           habit: 1,
-          nonwork: 4,
+          house: 2,
         };
       }
 
