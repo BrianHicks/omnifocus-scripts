@@ -21,22 +21,71 @@
     return null;
   }
 
+  type TagWeights = { [key: string]: number };
+
   class TaskScore {
     task: Task;
     fromTags: number | null;
     daysUntilDue: number | null;
     daysOld: number;
 
-    constructor(
-      task: Task,
-      fromTags: number | null,
-      daysUntilDue: number | null,
-      daysOld: number
-    ) {
+    constructor(task: Task, tagWeights: TagWeights) {
+      // start with weights from tags
+      const fromTags = this.scoreFromTags(task, tagWeights);
+
+      const now = new Date();
+
+      // tasks that are closer to their due date should be weighted higher, up
+      // to three weeks out
+      let daysUntilDue = null;
+      if (task.effectiveDueDate) {
+        daysUntilDue = this.daysBetween(now, task.effectiveDueDate);
+      }
+
+      // tasks that have been deferred should grow in urgency from their
+      // deferral date. This includes repeating tasks! Otherwise, they should
+      // grow in urgency according to when they were created. If both dates
+      // are somehow null, it's OK to not add any weight to the task.
+      const daysOld = this.daysBetween(
+        now,
+        task.deferDate || task.added || now
+      );
+
       this.task = task;
       this.fromTags = fromTags;
       this.daysUntilDue = daysUntilDue;
       this.daysOld = daysOld;
+    }
+
+    scoreFromTags(task: Task, tagWeights: TagWeights): null | number {
+      // we return a null weight if no tags match, because we don't want to
+      // choose tasks that don't match any tags.
+      var weight = null;
+
+      var todo = task.tags;
+      var seen: Tag[] = [];
+      while (todo.length !== 0) {
+        let tag = todo.pop();
+        if (seen.indexOf(tag) !== -1) {
+          continue;
+        }
+
+        if (tagWeights[tag.name]) {
+          weight = (weight || 0) + tagWeights[tag.name];
+        }
+
+        if (tag.parent) {
+          todo.push(tag.parent);
+        }
+        seen.push(tag);
+      }
+
+      return weight;
+    }
+
+    daysBetween(a: Date, b: Date): number {
+      let millis = Math.abs(a.getTime() - b.getTime());
+      return Math.ceil(millis / 1000 / 60 / 60 / 24);
     }
 
     toString(): string {
@@ -66,79 +115,11 @@
     }
   }
 
-  class TaskScorer {
-    tagWeights: { [key: string]: number };
-
-    constructor(tagWeights: { [key: string]: number }) {
-      this.tagWeights = tagWeights;
-    }
-
-    score(task: Task): TaskScore | null {
-      // start with weights from tags
-      const fromTags = this.scoreFromTags(task);
-      if (!fromTags) {
-        console.log(`skipping ${task.name} because no tags matched.`);
-        return null;
-      }
-
-      const now = new Date();
-
-      // tasks that are closer to their due date should be weighted higher, up
-      // to three weeks out
-      let daysUntilDue = null;
-      if (task.effectiveDueDate) {
-        daysUntilDue = this.daysBetween(now, task.effectiveDueDate);
-      }
-
-      // tasks that have been deferred should grow in urgency from their
-      // deferral date. This includes repeating tasks! Otherwise, they should
-      // grow in urgency according to when they were created. If both dates
-      // are somehow null, it's OK to not add any weight to the task.
-      const daysOld = this.daysBetween(
-        now,
-        task.deferDate || task.added || now
-      );
-
-      return new TaskScore(task, fromTags, daysUntilDue, daysOld);
-    }
-
-    scoreFromTags(task: Task): null | number {
-      // we return a null weight if no tags match, because we don't want to
-      // choose tasks that don't match any tags.
-      var weight = null;
-
-      var todo = task.tags;
-      var seen: Tag[] = [];
-      while (todo.length !== 0) {
-        let tag = todo.pop();
-        if (seen.indexOf(tag) !== -1) {
-          continue;
-        }
-
-        if (this.tagWeights[tag.name]) {
-          weight = (weight || 0) + this.tagWeights[tag.name];
-        }
-
-        if (tag.parent) {
-          todo.push(tag.parent);
-        }
-        seen.push(tag);
-      }
-
-      return weight;
-    }
-
-    daysBetween(a: Date, b: Date): number {
-      let millis = Math.abs(a.getTime() - b.getTime());
-      return Math.ceil(millis / 1000 / 60 / 60 / 24);
-    }
-  }
-
   type Method = "random" | "top";
 
   class FlagTasks {
-    scorer: TaskScorer;
     tasks: Task[];
+    tagWeights: TagWeights;
 
     method: Method;
 
@@ -150,7 +131,7 @@
       tagWeights: { [key: string]: number },
       method: Method
     ) {
-      this.scorer = new TaskScorer(tagWeights);
+      this.tagWeights = tagWeights;
 
       this.tasks = flattenedProjects
         .filter((p) => p.status == Project.Status.Active)
@@ -179,15 +160,10 @@
         return;
       }
 
-      let scored: TaskScore[] = [];
-      this.tasks.forEach((task) => {
-        let maybeScore = this.scorer.score(task);
-        if (maybeScore) {
-          scored.push(maybeScore);
-        }
-      });
-
-      scored.sort((a, b) => b.toNumber() - a.toNumber());
+      let scored = this.tasks
+        .map((task) => new TaskScore(task, this.tagWeights))
+        .filter((score) => score.fromTags === null)
+        .sort((a, b) => b.toNumber() - a.toNumber());
 
       if (scored.length === 0) {
         new Alert(
