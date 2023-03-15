@@ -179,6 +179,7 @@
           switch (this.method) {
             case "random":
               next = weightedRandom(scored);
+              console.log(next);
               scored = scored.filter((score) => score === next);
               break;
 
@@ -274,7 +275,7 @@
           personal: 1,
         };
       } else {
-        method = "random";
+        method = app.optionKeyDown ? "random" : "top";
         weights = {
           Anne: 8,
           learning: 4,
