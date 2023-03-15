@@ -112,8 +112,7 @@
                     switch (this.method) {
                         case "random":
                             next = weightedRandom(scored);
-                            console.log(next);
-                            scored = scored.filter((score) => score === next);
+                            scored = scored.filter((score) => score !== next);
                             break;
                         case "top":
                             let draftNext = scored.shift();
