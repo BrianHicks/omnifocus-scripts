@@ -86,7 +86,7 @@
     toString(): string {
       return `${
         this.task.name
-      }: ${this.toNumber()} with ${this.tagScore()} from tags, ${this.dueScore()} from due date, and ${this.ageScore()} from age`;
+      }: ${this.toNumber()} with ${this.tagScore()} from tags, ${this.dueScore()} from due date, and ${this.ageScore()} from age (${this.daysOld} days old)`;
     }
 
     tagScore(): number {
@@ -102,7 +102,7 @@
     }
 
     ageScore(): number {
-      return 2 ^ this.daysOld;
+      return 2 ** this.daysOld;
     }
 
     toNumber(): number {

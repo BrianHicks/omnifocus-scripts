@@ -60,7 +60,7 @@
             return Math.ceil(millis / 1000 / 60 / 60 / 24);
         }
         toString() {
-            return `${this.task.name}: ${this.toNumber()} with ${this.tagScore()} from tags, ${this.dueScore()} from due date, and ${this.ageScore()} from age`;
+            return `${this.task.name}: ${this.toNumber()} with ${this.tagScore()} from tags, ${this.dueScore()} from due date, and ${this.ageScore()} from age (${this.daysOld} days old)`;
         }
         tagScore() {
             return this.fromTags || 0;
@@ -72,7 +72,7 @@
             return Math.max(0, 21 - this.daysUntilDue);
         }
         ageScore() {
-            return 2 ^ this.daysOld;
+            return 2 ** this.daysOld;
         }
         toNumber() {
             return this.tagScore() + this.dueScore() + this.ageScore();
