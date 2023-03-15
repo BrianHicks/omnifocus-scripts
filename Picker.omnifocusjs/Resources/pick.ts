@@ -30,31 +30,26 @@
     daysOld: number;
 
     constructor(task: Task, tagWeights: TagWeights) {
+      this.task = task;
+
       // start with weights from tags
-      const fromTags = this.scoreFromTags(task, tagWeights);
+      this.fromTags = this.scoreFromTags(task, tagWeights);
 
       const now = new Date();
 
       // tasks that are closer to their due date should be weighted higher, up
       // to three weeks out
-      let daysUntilDue = null;
       if (task.effectiveDueDate) {
-        daysUntilDue = this.daysBetween(now, task.effectiveDueDate);
+        this.daysUntilDue = this.daysBetween(now, task.effectiveDueDate);
+      } else {
+        this.daysUntilDue = null;
       }
 
       // tasks that have been deferred should grow in urgency from their
       // deferral date. This includes repeating tasks! Otherwise, they should
       // grow in urgency according to when they were created. If both dates
       // are somehow null, it's OK to not add any weight to the task.
-      const daysOld = this.daysBetween(
-        now,
-        task.deferDate || task.added || now
-      );
-
-      this.task = task;
-      this.fromTags = fromTags;
-      this.daysUntilDue = daysUntilDue;
-      this.daysOld = daysOld;
+      this.daysOld = this.daysBetween(now, task.deferDate || task.added || now);
     }
 
     scoreFromTags(task: Task, tagWeights: TagWeights): null | number {
