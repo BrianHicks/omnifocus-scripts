@@ -107,7 +107,7 @@
     }
 
     ageScore(): number {
-      return this.daysOld;
+      return 2 ^ this.daysOld;
     }
 
     toNumber(): number {
