@@ -102,7 +102,7 @@
     }
 
     ageScore(): number {
-      return 1.5 ** this.daysOld;
+      return 1.4 ** Math.min(this.daysOld, 14);
     }
 
     toNumber(): number {

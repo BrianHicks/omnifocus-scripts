@@ -72,7 +72,7 @@
             return Math.max(0, 21 - this.daysUntilDue);
         }
         ageScore() {
-            return 1.5 ** this.daysOld;
+            return 1.4 ** Math.min(this.daysOld, 14);
         }
         toNumber() {
             return this.tagScore() + this.dueScore() + this.ageScore();
