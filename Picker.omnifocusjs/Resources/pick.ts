@@ -133,6 +133,8 @@
         .flatMap((p) =>
           p.flattenedTasks.filter(
             (t: Task) =>
+              // to work around a bug in omnifocus beta. Shouldn't need this
+              // first condition eventually.
               t.children.length == 0 &&
               (t.taskStatus == Task.Status.Available ||
                 t.taskStatus == Task.Status.DueSoon ||
