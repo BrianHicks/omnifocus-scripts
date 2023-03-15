@@ -146,7 +146,6 @@
     function isEarlyAfternoon(now) {
         now = now || new Date();
         let hour = now.getHours();
-        let minute = now.getMinutes();
         return hour >= 12 && hour < 15;
     }
     function isLateAfternoon(now) {
