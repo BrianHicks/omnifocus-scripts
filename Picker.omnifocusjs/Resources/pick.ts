@@ -159,7 +159,7 @@
 
       let scored = this.tasks
         .map((task) => new TaskScore(task, this.tagWeights))
-        .filter((score) => score.fromTags === null)
+        .filter((score) => score.fromTags !== null)
         .sort((a, b) => b.toNumber() - a.toNumber());
 
       if (scored.length === 0) {
