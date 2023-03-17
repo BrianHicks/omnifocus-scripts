@@ -135,7 +135,7 @@
             (t: Task) =>
               // to work around a bug in omnifocus beta. Shouldn't need this
               // first condition eventually.
-              t.children.length == 0 &&
+              t.children.filter((t: Task) => !t.completed).length == 0 &&
               (t.taskStatus == Task.Status.Available ||
                 t.taskStatus == Task.Status.DueSoon ||
                 t.taskStatus == Task.Status.Next ||
