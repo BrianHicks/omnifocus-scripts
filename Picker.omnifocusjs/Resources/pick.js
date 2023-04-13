@@ -180,9 +180,9 @@
                     }
                 }
                 weights = {
+                    habit: 32,
                     "from GitHub": 8,
                     "from Linear": 8,
-                    habit: 8,
                     work: 4,
                     Adminotaurs: 2,
                     learning: 2,
