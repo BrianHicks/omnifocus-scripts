@@ -11,7 +11,8 @@
                     t.taskStatus == Task.Status.Next ||
                     t.taskStatus == Task.Status.Overdue)))
                 .forEach((task) => {
-                if (task.containingProject && toFocus.indexOf(task.containingProject) === -1) {
+                if (task.containingProject &&
+                    toFocus.indexOf(task.containingProject) === -1) {
                     toFocus.push(task.containingProject);
                 }
             });

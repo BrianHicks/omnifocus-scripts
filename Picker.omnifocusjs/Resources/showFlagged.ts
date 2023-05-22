@@ -16,7 +16,10 @@
           )
         )
         .forEach((task: Task) => {
-          if (task.containingProject && toFocus.indexOf(task.containingProject) === -1) {
+          if (
+            task.containingProject &&
+            toFocus.indexOf(task.containingProject) === -1
+          ) {
             toFocus.push(task.containingProject);
           }
         });
