@@ -1,0 +1,13 @@
+{
+  "author": "Brian Hicks",
+  "identifier": "zone.bytes.projects",
+  "defaultLocale": "en",
+  "version": "1.0",
+  "description": "Sort projects by urgency.",
+  "actions": [
+    {
+      "image": "square.stack",
+      "identifier": "sort"
+    }
+  ]
+}
