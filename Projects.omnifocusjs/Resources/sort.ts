@@ -13,14 +13,14 @@ don't! Modify the .ts file and run `tsc` instead!
 
   class SortableProject {
     project: Project;
-    sortHierarchy: number[];
+    sortHierarchy: (number | null)[];
 
     constructor(project: Project) {
       this.project = project;
       this.sortHierarchy = this.calculateSortHierarchy();
     }
 
-    calculateSortHierarchy(): number[] {
+    calculateSortHierarchy(): (number | null)[] {
       // first, sort by status. Active projects first, then ones on hold.
       let status = 0;
 
@@ -38,57 +38,54 @@ don't! Modify the .ts file and run `tsc` instead!
 
       // second, sort by due date (by day.) That is, projects that are due
       // sooner show up first. If that's not set, consider all tasks due today
-      // but one year from now.
-      let today = new Date();
-      let defaultDate = new Date(
-        today.getFullYear() + 1,
-        today.getMonth(),
-        today.getDay()
-      );
+      // but one year from now. We will consider due tasks that are due sooner
+      // than the due date in the next step as well.
+      let todaystamp = new Date().getTime();
 
-      let due = -datestamp(this.project.dueDate || defaultDate);
+      let due: null | number = null;
+      if (this.project.dueDate) {
+        due = datestamp(this.project.dueDate);
+      }
 
       // third and fourth, sort by status of the tasks this project contains. We
       // want to see projects with due tasks sooner, then projects who have been recently
       // worked.
-      let taskDue: null | number = null;
       let mostRecentlyCompleted: null | number = null;
 
       for (let task of this.project.flattenedTasks as Task[]) {
+        if (task.dueDate && task.taskStatus === Task.Status.Next) {
+          if (!due) {
+            due = datestamp(task.dueDate);
+          } else {
+            due = Math.min(due, datestamp(task.dueDate));
+          }
+        }
+
         if (task.completionDate) {
           if (!mostRecentlyCompleted) {
             mostRecentlyCompleted = datestamp(task.completionDate);
           } else {
-            mostRecentlyCompleted = Math.max(
+            mostRecentlyCompleted = Math.min(
               mostRecentlyCompleted,
               datestamp(task.completionDate)
             );
           }
         }
-
-        if (task.dueDate) {
-          if (!taskDue) {
-            taskDue = datestamp(task.dueDate);
-          } else {
-            taskDue = Math.min(taskDue, datestamp(task.dueDate));
-          }
-        }
       }
 
-      if (!taskDue) {
-        taskDue = datestamp(defaultDate);
-      }
+      // mostRecentlyCompleted = mostRecentlyCompleted || -Infinity;
 
-      if (!mostRecentlyCompleted) {
-        mostRecentlyCompleted = 0;
-      }
-
-      return [status, isNotBucket, due, taskDue, mostRecentlyCompleted];
+      return [
+        due ? todaystamp - due : null,
+        status,
+        isNotBucket,
+        mostRecentlyCompleted ? todaystamp - mostRecentlyCompleted : null,
+      ];
     }
 
     compare(other: SortableProject): number {
       const ourHierarchy = this.sortHierarchy;
-      const theirHierarchy: number[] = other.sortHierarchy;
+      const theirHierarchy = other.sortHierarchy;
       const maxHierarchyLevel = Math.max(
         ourHierarchy.length,
         theirHierarchy.length
@@ -98,7 +95,9 @@ don't! Modify the .ts file and run `tsc` instead!
         const ourLevel = ourHierarchy[i];
         const theirLevel = theirHierarchy[i];
 
-        if (!ourLevel) {
+        if (!ourLevel && !theirLevel) {
+          continue;
+        } else if (!ourLevel) {
           return 1;
         } else if (!theirLevel) {
           return -1;
@@ -135,15 +134,15 @@ don't! Modify the .ts file and run `tsc` instead!
 
       let currentProjects = sortableProjects.map((sp) => sp.project);
 
+      let previousProject = null;
       for (let i = 0; i < currentProjects.length; i++) {
         let project = currentProjects[i];
-        if (i === 0) {
+        if (!previousProject) {
           moveSections([project], library.beginning);
         } else {
-          let previousProject = currentProjects[i - 1];
-
           moveSections([project], previousProject.after);
         }
+        previousProject = project;
       }
     } catch (err) {
       console.error(err);
