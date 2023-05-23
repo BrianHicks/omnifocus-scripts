@@ -72,7 +72,7 @@ don't! Modify the .ts file and run `tsc` instead!
             for (var i = 0; i < maxHierarchyLevel; i++) {
                 const ourLevel = ourHierarchy[i];
                 const theirLevel = theirHierarchy[i];
-                if (!ourLevel && !theirLevel) {
+                if (ourLevel === theirLevel) {
                     continue;
                 }
                 else if (!ourLevel) {

@@ -95,7 +95,7 @@ don't! Modify the .ts file and run `tsc` instead!
         const ourLevel = ourHierarchy[i];
         const theirLevel = theirHierarchy[i];
 
-        if (!ourLevel && !theirLevel) {
+        if (ourLevel === theirLevel) {
           continue;
         } else if (!ourLevel) {
           return 1;
