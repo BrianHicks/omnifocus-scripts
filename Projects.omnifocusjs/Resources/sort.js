@@ -81,10 +81,10 @@ don't! Modify the .ts file and run `tsc` instead!
                 else if (!theirLevel) {
                     return -1;
                 }
-                else if (ourHierarchy > theirHierarchy) {
+                else if (ourLevel > theirLevel) {
                     return -1;
                 }
-                else if (theirHierarchy > ourHierarchy) {
+                else if (theirLevel > ourLevel) {
                     return 1;
                 }
             }
