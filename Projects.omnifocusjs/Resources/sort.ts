@@ -8,7 +8,7 @@ don't! Modify the .ts file and run `tsc` instead!
       date.getFullYear(),
       date.getMonth(),
       date.getDay(),
-      date.getHours(),
+      date.getHours()
     ).getTime();
   }
 
@@ -51,7 +51,7 @@ don't! Modify the .ts file and run `tsc` instead!
       // third and fourth, sort by status of the tasks this project contains. We
       // want to see projects with due tasks sooner, then projects who have been recently
       // worked.
-      let mostRecentlyCompleted: null | number = null;
+      let mostRecentlyActive: null | number = null;
 
       for (let task of this.project.flattenedTasks as Task[]) {
         if (task.dueDate && task.taskStatus === Task.Status.Next) {
@@ -62,25 +62,25 @@ don't! Modify the .ts file and run `tsc` instead!
           }
         }
 
-        if (task.completionDate) {
-          if (!mostRecentlyCompleted) {
-            mostRecentlyCompleted = hourstamp(task.completionDate);
+        let activeTime = task.completionDate || task.modified || task.added;
+
+        if (activeTime) {
+          if (!mostRecentlyActive) {
+            mostRecentlyActive = hourstamp(activeTime);
           } else {
-            mostRecentlyCompleted = Math.min(
-              mostRecentlyCompleted,
-              hourstamp(task.completionDate)
+            mostRecentlyActive = Math.min(
+              mostRecentlyActive,
+              hourstamp(activeTime)
             );
           }
         }
       }
 
-      // mostRecentlyCompleted = mostRecentlyCompleted || -Infinity;
-
       return [
         due ? todaystamp - due : null,
         status,
         isNotBucket,
-        mostRecentlyCompleted ? todaystamp - mostRecentlyCompleted : null,
+        mostRecentlyActive ? todaystamp - mostRecentlyActive : null,
       ];
     }
 
