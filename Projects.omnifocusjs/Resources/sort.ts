@@ -129,6 +129,8 @@ don't! Modify the .ts file and run `tsc` instead!
 
       sortableProjects.sort((a, b) => a.compare(b));
 
+      // console.log(sortableProjects.map(p => `${p.sortHierarchy.join("\t")}\t${p.project.name}`).join("\n"))
+
       // change the perspective so we can see the sort happen
       document.windows[0].perspective = Perspective.BuiltIn.Projects;
       document.windows[0].focus = null;
