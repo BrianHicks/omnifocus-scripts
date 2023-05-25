@@ -13,7 +13,7 @@ don't! Modify the .ts file and run `tsc` instead!
             this.sortHierarchy = this.calculateSortHierarchy();
         }
         calculateSortHierarchy() {
-            // first, sort by status. Active projects first, then ones on hold.
+            // Active projects first, then ones on hold.
             let status = 0;
             if (this.project.status == Project.Status.Active) {
                 status = 2;
@@ -21,22 +21,22 @@ don't! Modify the .ts file and run `tsc` instead!
             else if (this.project.status == Project.Status.OnHold) {
                 status = 1;
             }
-            // second, put "bucket" projects at the bottom.
+            // Is this task a "bucket" project? Lower, please.
             let isNotBucket = 1;
             if (this.project.containsSingletonActions) {
                 isNotBucket = 0;
             }
-            // second, sort by due date (by day.) That is, projects that are due
-            // sooner show up first. If that's not set, consider all tasks due today
-            // but one year from now. We will consider due tasks that are due sooner
-            // than the due date in the next step as well.
+            // sort by due date (by day.) That is, projects that are due sooner show
+            // up first. If that's not set, consider all tasks due today but one year
+            // from now. We will consider due tasks that are due sooner than the due
+            // date in the next step as well.
             let todaystamp = hourstamp(new Date());
             let due = null;
             if (this.project.dueDate) {
                 due = hourstamp(this.project.dueDate);
             }
-            // third and fourth, sort by status of the tasks this project contains. We
-            // want to see projects with due tasks sooner, then projects who have been recently
+            // sort by status of the tasks this project contains. We want to see
+            // projects with due tasks sooner, then projects who have been recently
             // worked.
             let mostRecentlyActive = null;
             for (let task of this.project.flattenedTasks) {
