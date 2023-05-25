@@ -26,7 +26,23 @@ don't! Modify the .ts file and run `tsc` instead!
       let status = 0;
 
       if (this.project.status == Project.Status.Active) {
-        status = 2;
+        let now = new Date();
+
+        // If all the tasks in the project are blocked, then it's effectively
+        // on hold.
+        let allBlocked = this.project.flattenedTasks
+          .map((t: Task) => t.taskStatus === Task.Status.Blocked)
+          .reduce((a, b) => a && b);
+
+        if (
+          (this.project.effectiveDeferDate &&
+            this.project.effectiveDeferDate > now) ||
+          allBlocked
+        ) {
+          status = 1;
+        } else {
+          status = 2;
+        }
       } else if (this.project.status == Project.Status.OnHold) {
         status = 1;
       }
@@ -77,10 +93,10 @@ don't! Modify the .ts file and run `tsc` instead!
       }
 
       return [
-        due ? todaystamp - due : null,
+        due ? todaystamp - due : 0,
         status,
         isNotBucket,
-        mostRecentlyActive ? todaystamp - mostRecentlyActive : null,
+        mostRecentlyActive ? todaystamp - mostRecentlyActive : 0,
       ];
     }
 
