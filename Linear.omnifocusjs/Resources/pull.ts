@@ -91,7 +91,9 @@
         }
 
         let taskName = `${linearTask.identifier}: ${linearTask.title}`;
-        let task = project.taskNamed(taskName) || new Task(taskName, project);
+        let task =
+          project.flattenedTasks.byName(taskName) ||
+          new Task(taskName, project);
         task.addTag(teamTag);
         task.addTag(linearTag);
         task.markIncomplete();
