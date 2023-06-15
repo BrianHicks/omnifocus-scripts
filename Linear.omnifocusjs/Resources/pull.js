@@ -27,7 +27,7 @@
             ///////////////////////////
             req.method = "POST";
             req.bodyString =
-                '{"query":"{ viewer { assignedIssues(filter: {state: {type: {nin: [\\"completed\\",\\"canceled\\"]}}}) { nodes { identifier title url team { name } project { name url } } } } }"}';
+                '{"query":"{ viewer { assignedIssues(filter: {state: {type: {nin: [\\"completed\\",\\"canceled\\"]}}}) { nodes { identifier title url dueDate team { name } project { name url } } } } }"}';
             req.headers = {
                 "Content-Type": "application/json",
                 Authorization: key,
@@ -83,6 +83,11 @@
                     else {
                         task.appendStringToNote(linearTask.url);
                     }
+                }
+                if (linearTask.dueDate) {
+                    // set the date but strip off the time component
+                    let date = new Date(linearTask.dueDate);
+                    task.dueDate = new Date(date.getFullYear(), date.getMonth(), date.getDate(), 0, 0, 0);
                 }
             }
             if (app.platformName === "macOS") {
