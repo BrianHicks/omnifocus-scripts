@@ -32,7 +32,7 @@ don't! Modify the .ts file and run `tsc` instead!
         // on hold.
         let allBlocked = this.project.flattenedTasks
           .map((t: Task) => t.taskStatus === Task.Status.Blocked)
-          .reduce((a, b) => a && b);
+          .reduce((a, b) => a && b, true);
 
         if (
           (this.project.effectiveDeferDate &&
@@ -163,7 +163,7 @@ don't! Modify the .ts file and run `tsc` instead!
         }
         previousProject = project;
       }
-    } catch (err) {
+    } catch (err: unknown) {
       console.error(err);
     }
   });

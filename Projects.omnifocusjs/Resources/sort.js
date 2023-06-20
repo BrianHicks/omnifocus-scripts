@@ -21,7 +21,7 @@ don't! Modify the .ts file and run `tsc` instead!
                 // on hold.
                 let allBlocked = this.project.flattenedTasks
                     .map((t) => t.taskStatus === Task.Status.Blocked)
-                    .reduce((a, b) => a && b);
+                    .reduce((a, b) => a && b, true);
                 if ((this.project.effectiveDeferDate &&
                     this.project.effectiveDeferDate > now) ||
                     allBlocked) {
