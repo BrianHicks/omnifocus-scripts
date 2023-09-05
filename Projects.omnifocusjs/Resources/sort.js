@@ -7,23 +7,30 @@ don't! Modify the .ts file and run `tsc` instead!
     function hourstamp(date) {
         return new Date(date.getFullYear(), date.getMonth(), date.getDay(), date.getHours()).getTime();
     }
-    class SortableProject {
+    class Sortable {
         constructor(project) {
-            this.project = project;
+            this.target = project;
             this.sortHierarchy = this.calculateSortHierarchy();
         }
         calculateSortHierarchy() {
+            if (this.target instanceof Project) {
+                return this.calculateSortHierarchyProject(this.target);
+            }
+            else {
+                return [Infinity];
+            }
+        }
+        calculateSortHierarchyProject(project) {
             // Active projects first, then ones on hold.
             let status = 0;
-            if (this.project.status == Project.Status.Active) {
+            if (project.status == Project.Status.Active) {
                 let now = new Date();
                 // If all the tasks in the project are blocked, then it's effectively
                 // on hold.
-                let allBlocked = this.project.flattenedTasks
+                let allBlocked = project.flattenedTasks
                     .map((t) => t.taskStatus === Task.Status.Blocked)
                     .reduce((a, b) => a && b, true);
-                if ((this.project.effectiveDeferDate &&
-                    this.project.effectiveDeferDate > now) ||
+                if ((project.effectiveDeferDate && project.effectiveDeferDate > now) ||
                     allBlocked) {
                     status = 1;
                 }
@@ -31,12 +38,12 @@ don't! Modify the .ts file and run `tsc` instead!
                     status = 2;
                 }
             }
-            else if (this.project.status == Project.Status.OnHold) {
+            else if (this.target.status == Project.Status.OnHold) {
                 status = 1;
             }
             // Is this task a "bucket" project? Lower, please.
             let isNotBucket = 1;
-            if (this.project.containsSingletonActions) {
+            if (project.containsSingletonActions) {
                 isNotBucket = 0;
             }
             // sort by due date (by day.) That is, projects that are due sooner show
@@ -45,14 +52,14 @@ don't! Modify the .ts file and run `tsc` instead!
             // date in the next step as well.
             let todaystamp = hourstamp(new Date());
             let due = null;
-            if (this.project.dueDate) {
-                due = hourstamp(this.project.dueDate);
+            if (project.dueDate) {
+                due = hourstamp(project.dueDate);
             }
             // sort by status of the tasks this project contains. We want to see
             // projects with due tasks sooner, then projects who have been recently
             // worked.
             let mostRecentlyActive = null;
-            for (let task of this.project.flattenedTasks) {
+            for (let task of project.flattenedTasks) {
                 if (task.dueDate && task.taskStatus === Task.Status.Next) {
                     if (!due) {
                         due = hourstamp(task.dueDate);
@@ -104,21 +111,21 @@ don't! Modify the .ts file and run `tsc` instead!
             return 0;
         }
         toString() {
-            return `[Project: ${this.project.name}]`;
+            return `[Project: ${this.target.name}]`;
         }
     }
     var action = new PlugIn.Action(async () => {
         try {
-            let sortableProjects = flattenedProjects
+            let sortableProjects = library
                 .filter((p) => p.status !== Project.Status.Done &&
                 p.status !== Project.Status.Dropped)
-                .map((p) => new SortableProject(p));
+                .map((p) => new Sortable(p));
             sortableProjects.sort((a, b) => a.compare(b));
-            // console.log(sortableProjects.map(p => `${p.sortHierarchy.join("\t")}\t${p.project.name}`).join("\n"))
+            // console.log(sortableProjects.map(p => `${p.sortHierarchy.join("\t")}\t${p.target.name}`).join("\n"))
             // change the perspective so we can see the sort happen
             document.windows[0].perspective = Perspective.BuiltIn.Projects;
             document.windows[0].focus = null;
-            let currentProjects = sortableProjects.map((sp) => sp.project);
+            let currentProjects = sortableProjects.map((sp) => sp.target);
             let previousProject = null;
             for (let i = 0; i < currentProjects.length; i++) {
                 let project = currentProjects[i];
