@@ -1,0 +1,13 @@
+{
+  "author": "Brian Hicks",
+  "identifier": "zone.bytes.awaitReview",
+  "defaultLocale": "en",
+  "version": "1.0",
+  "description": "Await Review",
+  "actions": [
+    {
+      "identifier": "awaitReview",
+      "image": "eyes"
+    }
+  ]
+}
